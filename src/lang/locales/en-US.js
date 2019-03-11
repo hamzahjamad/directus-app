@@ -457,5 +457,7 @@ export default {
   duplicating_field: "Duplicating Field",
   duplicate: "Duplicate",
   upload_exceeds_max_size:
-    "{filename} can't be uploaded. Your server is not configured to handle uploads of this size."
+    "{filename} can't be uploaded. Your server is not configured to handle uploads of this size.",
+  file_type_not_accepted:
+    "{filename} can't be uploaded. It is not a valid file type for this field."
 };

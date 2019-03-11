@@ -123,6 +123,15 @@ export default {
       embed: false
     };
   },
+  computed: {
+    acceptTypesList() {
+      if (this.accept) {
+        return this.accept.trim().split(/\s*,\s*/)
+      } else {
+        return []
+      }
+    }
+  },
   methods: {
     saveEmbed() {
       this.$api
@@ -157,6 +166,14 @@ export default {
       if (size !== -1 && size > this.$store.state.serverInfo.maxUploadSize) {
         this.$events.emit("warning", {
           notify: this.$t("upload_exceeds_max_size", { filename: name })
+        });
+
+        return;
+      }
+
+      if (this.acceptTypesList.length > 0 && !this.acceptTypesList.includes(type)) {
+        this.$events.emit("warning", {
+          notify: this.$t("file_type_not_accepted", { filename: name })
         });
 
         return;
