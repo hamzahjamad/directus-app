@@ -12,7 +12,8 @@ import {
   REFRESH_TOKEN,
   REMOVE_AUTH_ERROR,
   LOGOUT,
-  CHANGE_API
+  CHANGE_API,
+  SWITCH_PROJECT
 } from "../../mutation-types";
 import { stopPolling } from "../../../polling";
 
@@ -96,7 +97,7 @@ export function loginSSO({ commit }, request_token) {
     .then(res => res.data)
     .then(({ token }) => {
       api.token = token;
-
+      api.localExp = new Date(Date.now() + 5 * 60000).getTime();
       commit(LOGIN_SUCCESS, {
         project: project,
         url,
@@ -122,12 +123,15 @@ export function logout({ commit }, error) {
   });
 }
 
+export function switchProject({ commit }, obj) {
+  commit(SWITCH_PROJECT, obj);
+}
+
 export function changeAPI({ commit, dispatch }, url) {
   dispatch("logout").then(() => {
     const parts = url.split("/");
     const project = parts.pop() || parts.pop();
     const newUrl = parts.join("/");
-
     commit(CHANGE_API, { url: newUrl, project });
   });
 }

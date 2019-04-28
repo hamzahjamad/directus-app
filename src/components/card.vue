@@ -17,68 +17,51 @@
         :style="{ backgroundColor: `var(--${color})` }"
         class="header"
       >
-        <button
-          v-if="selectable"
-          type="button"
-          class="select"
-          @click.stop="$emit('select')"
-        >
-          <i class="material-icons">{{ selectionIcon }}</i>
+        <button v-if="selectable" type="button" class="select" @click.stop="$emit('select')">
+          <v-icon :name="selectionIcon" />
         </button>
 
-        <img
-          v-if="src && !error"
-          :alt="title"
-          :src="src"
-          @error="onImageError"
-        />
+        <img v-if="src && !error" :alt="title" :src="src" @error="onImageError" />
 
-        <i v-if="error" class="material-icons error icon">broken_image</i>
+        <v-icon v-if="error" class="error icon" name="broken_image" size="48" color="white" />
 
-        <i
+        <v-icon
           v-if="icon"
           :class="{ 'half-opacity': opacity === 'half' }"
-          class="material-icons icon"
-          >{{ icon }}</i
-        >
+          class="icon"
+          :name="icon"
+          size="48"
+          color="white"
+        />
 
         <div v-if="$slots.icon" class="custom-icon"><slot name="icon" /></div>
 
         <span v-if="label" class="label">{{ label }}</span>
       </div>
-      <div
-        v-else
-        class="header small"
-        :style="{ backgroundColor: `var(--${color})` }"
-      >
-        <button
-          v-if="selectable"
-          type="button"
-          class="select"
-          @click.stop="$emit('select')"
-        >
-          <i class="material-icons">{{ selectionIcon }}</i>
+      <div v-else class="header small" :style="{ backgroundColor: `var(--${color})` }">
+        <button v-if="selectable" type="button" class="select" @click.stop="$emit('select')">
+          <v-icon :name="selectionIcon" />
         </button>
       </div>
       <div class="body" :class="{ menu: options != null }">
         <div class="main">
-          <component :is="titleElement" class="title" v-tooltip="title">{{
-            title
-          }}</component>
-          <p v-if="subtitle" class="subtitle style-4">{{ subtitle }}</p>
+          <component :is="titleElement" class="title" v-tooltip="title">
+            {{ title }}
+          </component>
+          <p v-if="subtitle" class="subtitle">{{ subtitle }}</p>
           <p v-if="body" class="content">{{ body }}</p>
         </div>
         <v-popover placement="right-start" offset="2">
           <button v-if="options != null" type="button" class="menu-toggle">
-            <i class="material-icons">more_vert</i>
+            <v-icon name="more_vert" />
           </button>
 
           <template slot="popover">
             <ul class="ctx-menu">
               <li v-for="({ text, icon }, id) in options" :key="id">
                 <button type="button" @click="$emit(id)" v-close-popover>
-                  <i class="material-icons" v-if="icon">{{ icon }}</i>
-                  {{ text }}
+                  <v-icon v-if="icon" :name="icon" />
+                  {{ $t("remove") }}
                 </button>
               </li>
             </ul>
@@ -107,7 +90,7 @@ export default {
     },
     color: {
       type: String,
-      default: "darkest-gray"
+      default: "gray"
     },
     src: {
       type: String,
@@ -209,12 +192,9 @@ export default {
 
 <style lang="scss" scoped>
 .v-card {
-  width: var(--width-small);
-  border-radius: 3px;
-  box-shadow: var(--box-shadow);
+  width: 136px;
   overflow: hidden;
   transition: box-shadow var(--fast) var(--transition);
-  background-color: var(--white);
   cursor: pointer;
 
   a {
@@ -225,19 +205,22 @@ export default {
 
   &:not(.disabled):hover,
   &:not(.disabled).selected {
-    box-shadow: var(--box-shadow-accent);
-    transform: translateY(-1px);
+    .header {
+      background-color: var(--dark-gray) !important;
+    }
   }
 
   .header {
-    height: var(--width-small);
+    transition: all var(--fast) var(--transition);
+    height: 136px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
     display: grid;
     grid-template-columns: 1;
     grid-template-rows: 1;
     align-items: center;
     justify-content: center;
     position: relative;
-    border-bottom: 1px solid var(--lightest-gray);
 
     &.small {
       height: 40px;
@@ -245,13 +228,18 @@ export default {
 
     .select {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 40px;
       color: var(--white);
       opacity: 0;
       transition: opacity var(--fast) var(--transition);
 
       i {
+        position: absolute;
+        top: 10px;
+        left: 10px;
         font-size: 20px;
       }
 
@@ -267,6 +255,7 @@ export default {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      background-color: var(--white);
     }
 
     .icon {
@@ -276,8 +265,8 @@ export default {
     }
 
     .custom-icon {
-      width: 64px;
-      height: 64px;
+      width: 48px;
+      height: 48px;
     }
 
     img,
@@ -302,16 +291,18 @@ export default {
   }
 
   &.disabled {
-    opacity: 0.5;
     cursor: not-allowed;
 
     & .header {
-      background-color: var(--dark-gray) !important;
+      & .icon,
+      & .custom-icon {
+        opacity: 0.3;
+      }
     }
   }
 
   .body {
-    padding: 10px;
+    padding-top: 8px;
     position: relative;
     display: flex;
     align-items: center;
@@ -345,6 +336,10 @@ export default {
   .title {
     margin-bottom: 2px;
   }
+  .subtitle {
+    color: var(--light-gray);
+    font-size: 13px;
+  }
 
   .content {
     font-size: 11px;
@@ -355,11 +350,7 @@ export default {
   }
 
   .error {
-    opacity: 0.5;
-  }
-
-  .half-opacity {
-    opacity: 0.5;
+    opacity: 0.2;
   }
 
   &.selectable {
@@ -375,12 +366,15 @@ export default {
       left: 0;
       top: 0;
       opacity: 0;
-      background-image: linear-gradient(
-        -180deg,
-        #000000 4%,
-        rgba(0, 0, 0, 0) 100%
-      );
+      background-image: linear-gradient(-180deg, #263238 4%, rgba(38, 50, 56, 0) 100%);
       transition: opacity var(--fast) var(--transition);
+    }
+
+    &.selection-mode {
+      .select {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     &:hover,
@@ -388,7 +382,7 @@ export default {
     &.selected {
       .select {
         transition: none;
-        opacity: 0.5;
+        opacity: 0.7;
 
         &:hover {
           opacity: 1;
@@ -409,7 +403,7 @@ export default {
 .ctx-menu {
   list-style: none;
   padding: 0;
-  width: var(--width-small);
+  width: 136px;
 
   li {
     display: block;
@@ -431,11 +425,11 @@ export default {
     transition: color var(--fast) var(--transition);
 
     &:hover {
-      color: var(--accent);
+      color: var(--darkest-gray);
       transition: none;
 
       i {
-        color: var(--accent);
+        color: var(--darkest-gray);
         transition: none;
       }
     }

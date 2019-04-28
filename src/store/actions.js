@@ -45,22 +45,14 @@ export function latency({ commit }) {
 export function getCurrentUser({ commit }) {
   return api
     .getMe({
-      fields: [
-        "id",
-        "avatar.*",
-        "email",
-        "first_name",
-        "last_name",
-        "locale",
-        "roles.*"
-      ]
+      fields: ["id", "avatar.*", "email", "first_name", "last_name", "locale", "roles.*.*"]
     })
     .then(res => res.data)
     .then(userInfo => {
       return {
         ...userInfo,
         roles: userInfo.roles.map(obj => obj.role),
-        admin: userInfo.roles.map(obj => obj.role).includes(1)
+        admin: !!userInfo.roles.map(obj => obj.role).find(obj => obj.id === 1)
       };
     })
     .then(data => commit(SET_CURRENT_USER, data));
@@ -74,12 +66,7 @@ export function track({ commit, state }, { page }) {
   };
 
   commit(UPDATE_CURRENT_USER, data);
-  return api.request(
-    "PATCH",
-    `/users/${currentUserID}/tracking/page`,
-    {},
-    data
-  );
+  return api.request("PATCH", `/users/${currentUserID}/tracking/page`, {}, data);
 }
 
 export function getBookmarks({ commit }) {

@@ -2,7 +2,7 @@
   <div class="v-avatar">
     <div
       :style="{
-        borderColor: `var(--${color})`,
+        // borderColor: `var(--${color})`,
         width: `${size}px`,
         height: `${size}px`
       }"
@@ -16,18 +16,9 @@
         @load="loading = false"
         @error="onImageLoadingError"
       />
-      <i
-        v-else
-        :style="{ fontSize: size / 2 + 2 + 'px' }"
-        class="material-icons"
-        >person</i
-      >
+      <v-icon v-else :style="{ fontSize: size / 2 + 2 + 'px' }" name="person" />
     </div>
-    <div
-      v-if="indicator"
-      :style="{ backgroundColor: `var(--${color})` }"
-      class="indicator"
-    />
+    <div v-if="indicator" :style="{ backgroundColor: `var(--${color})` }" class="indicator" />
   </div>
 </template>
 
@@ -83,7 +74,8 @@ export default {
 
 .wrapper {
   border-radius: 50%;
-  border: 2px solid;
+  border: 2px solid var(--lighter-gray);
+  background-color: var(--white);
   height: 100%;
   width: 100%;
   position: relative;

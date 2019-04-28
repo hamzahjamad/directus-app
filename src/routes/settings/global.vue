@@ -1,6 +1,6 @@
 <template>
   <div class="settings-global">
-    <v-header :breadcrumb="links">
+    <v-header :breadcrumb="links" :icon-link="`/settings`" icon-color="warning">
       <template slot="buttons">
         <v-header-button
           :disabled="!editing"
@@ -48,8 +48,7 @@ export default {
       return [
         {
           name: this.$t("settings"),
-          path: "/settings",
-          color: "warning"
+          path: "/settings"
         },
         {
           name: this.$t("settings_global"),

@@ -1,0 +1,103 @@
+{
+  "name": "$t:button_group",
+  "version": "1.0.0",
+  "types": ["string"],
+  "fieldset": true,
+  "icon": "view_week",
+  "options": {
+    "choices": {
+      "name": "$t:choices",
+      "comment": "$t:choices_comment",
+      "interface": "json",
+      "type": "JSON",
+      "default": [
+        [
+          {
+            "label": "$t:flight",
+            "icon": "flight",
+            "value": "flight"
+          },
+          {
+            "label": "$t:cruise",
+            "icon": "directions_boat",
+            "value": "cruise"
+          }
+        ],
+        {
+          "label": "$t:bus",
+          "icon": "directions_bus",
+          "value": "bus"
+        },
+        {
+          "label": "$t:car",
+          "icon": "directions_car",
+          "value": "car"
+        },
+        {
+          "label": "$t:bike",
+          "icon": "directions_bike",
+          "value": "bike"
+        },
+        {
+          "icon": "directions_run",
+          "value": "run"
+        },
+        {
+          "label": "$t:sleep",
+          "value": "sleep"
+        }
+      ]
+    },
+    "theme": {
+      "name": "$t:theme",
+      "comment": "$t:theme_comment",
+      "interface": "button-group",
+      "type": "JSON",
+      "default": "solid",
+      "options": {
+        "choices": [
+          {
+            "label": "Solid",
+            "value": "solid"
+          },
+          {
+            "label": "Outline",
+            "value": "outline"
+          }
+        ]
+      }
+    }
+  },
+  "translation": {
+    "en-US": {
+      "button_group": "Button Group",
+      "choices": "choices",
+      "choices_comment":
+        "Enter JSON key value pairs with the saved value and text displayed.",
+      "theme": "Interface Theme",
+      "theme_comment": "Set the UI of interface if supported",
+      "value": "Value",
+      "car": "Car",
+      "bike": "Bike",
+      "bus": "Bus",
+      "sleep": "Sleep",
+      "flight": "Flight",
+      "cruise": "Cruise"
+    },
+	"fr-FR": {
+      "button_group": "Groupe de boutons",
+      "choices": "choix",
+      "choices_comment":
+        "Saisir des pairs de clefs et valeurs en JSON avec la valeur enregistrée et le texte affiché",
+      "theme": "Thème d'interface",
+      "theme_comment": "Sélectionne l'interface utilisateur si supporté",
+      "value": "Valeur",
+      "car": "Voiture",
+      "bike": "Vélo",
+      "bus": "Bus",
+      "sleep": "Dormir",
+      "flight": "Vol",
+      "cruise": "Croisière"
+    }
+  }
+}

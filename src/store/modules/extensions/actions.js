@@ -1,3 +1,5 @@
+/* global require */
+
 import { forEach, mapKeys, isObject, mapValues } from "lodash";
 import api from "../../../api";
 import { i18n } from "../../../lang/";
@@ -21,11 +23,7 @@ function translateFields(meta, type, id) {
       //   like $t:option $t:or $t:value
       return value
         .split(" ")
-        .map(word =>
-          word.startsWith("$t:")
-            ? i18n.t(`${type}-${id}-${word.substring(3)}`)
-            : word
-        )
+        .map(word => (word.startsWith("$t:") ? i18n.t(`${type}-${id}-${word.substring(3)}`) : word))
         .join(" ");
     }
 
@@ -40,6 +38,47 @@ function translateFields(meta, type, id) {
   };
 
   return Array.isArray(meta) ? meta.map(format) : mapValues(meta, format);
+}
+
+/**
+ * Read all the meta.json files of the provided extension type and return them
+ * as an object ready to be put into the store.
+ * @param  {String} type - Type of extension to read
+ * @return {Array}       - Meta information for all extensions of the given type
+ */
+function readCoreExtensions(type) {
+  let requireContext;
+
+  switch (type) {
+    case "interfaces":
+      requireContext = require.context("@/interfaces/", true, /meta.json$/);
+      break;
+    case "layouts":
+      requireContext = require.context("@/layouts/", true, /meta.json$/);
+      break;
+    case "pages":
+      requireContext = require.context("@/pages/", true, /meta.json$/);
+      break;
+  }
+
+  return requireContext.keys().map(readMeta);
+
+  function readMeta(fileName) {
+    const metaDefinition = requireContext(fileName);
+
+    const extensionId = fileName
+      .replace(/^\.\//, "") // remove the ./ from the beginning
+      .replace(/\.\w+$/, "") // remove the extension from the end
+      .split(/\//)[0];
+
+    return {
+      ...metaDefinition,
+      id: extensionId,
+      // Mark them as core interfaces so the app won't try to fetch them from
+      // the server
+      core: true
+    };
+  }
 }
 
 /**
@@ -76,6 +115,8 @@ export function getExtensions({ commit }, type) {
       Prefix by type and id
     */
       .then(extensions => {
+        extensions = [...extensions, ...readCoreExtensions(type)];
+
         extensions.forEach(extension => {
           const { id, translation } = extension;
 
@@ -97,9 +138,7 @@ export function getExtensions({ commit }, type) {
        *   with previously registered translations
        */
       .then(extensions =>
-        extensions.map(extension =>
-          translateFields(extension, type, extension.id)
-        )
+        extensions.map(extension => translateFields(extension, type, extension.id))
       )
 
       /**

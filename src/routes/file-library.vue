@@ -1,7 +1,7 @@
 <template>
   <v-not-found v-if="notFound" />
   <div class="route-file-library" v-else>
-    <v-header info-toggle :breadcrumb="breadcrumb">
+    <v-header info-toggle :breadcrumb="breadcrumb" icon="photo_library">
       <template slot="title">
         <button
           :class="currentBookmark ? 'active' : null"
@@ -9,9 +9,7 @@
           class="bookmark"
           @click="bookmarkModal = true"
         >
-          <i class="material-icons">
-            {{ currentBookmark ? "bookmark" : "bookmark_border" }}
-          </i>
+          <v-icon :name="currentBookmark ? 'bookmark' : 'bookmark_border'" />
         </button>
         <div v-if="currentBookmark" class="bookmark-name no-wrap">
           ({{ currentBookmark.title }})
@@ -21,7 +19,7 @@
         v-show="selection.length === 0 && !emptyCollection"
         :filters="filters"
         :search-query="searchQuery"
-        :field-names="fieldNames"
+        :field-names="filterableFieldNames"
         :placeholder="resultCopy"
         @filter="updatePreferences('filters', $event)"
         @search="updatePreferences('search_query', $event)"
@@ -237,19 +235,11 @@ export default {
     },
     viewQuery() {
       if (!this.preferences) return {};
-      return (
-        (this.preferences.view_query &&
-          this.preferences.view_query[this.viewType]) ||
-        {}
-      );
+      return (this.preferences.view_query && this.preferences.view_query[this.viewType]) || {};
     },
     viewOptions() {
       if (!this.preferences) return {};
-      return (
-        (this.preferences.view_options &&
-          this.preferences.view_options[this.viewType]) ||
-        {}
-      );
+      return (this.preferences.view_options && this.preferences.view_options[this.viewType]) || {};
     },
     resultCopy() {
       if (!this.meta || !this.preferences) return this.$t("loading");
@@ -267,8 +257,8 @@ export default {
             count: this.$n(this.meta.total_count)
           });
     },
-    fieldNames() {
-      return this.fields.map(field => field.field);
+    filterableFieldNames() {
+      return this.fields.filter(field => field.datatype).map(field => field.field);
     },
     layoutNames() {
       if (!this.$store.state.extensions.layouts) return {};
@@ -429,10 +419,7 @@ export default {
 
     const collectionInfo = store.state.collections[collection] || null;
 
-    if (
-      collection.startsWith("directus_") === false &&
-      collectionInfo === null
-    ) {
+    if (collection.startsWith("directus_") === false && collectionInfo === null) {
       return next(vm => (vm.notFound = true));
     }
 
@@ -471,10 +458,7 @@ export default {
 
     const collectionInfo = this.$store.state.collections[collection] || null;
 
-    if (
-      collection.startsWith("directus_") === false &&
-      collectionInfo === null
-    ) {
+    if (collection.startsWith("directus_") === false && collectionInfo === null) {
       this.notFound = true;
       return next();
     }
@@ -531,7 +515,7 @@ label.style-4 {
   }
 }
 .bookmark-name {
-  color: var(--accent);
+  color: var(--darkest-gray);
   margin-left: 5px;
   margin-top: 3px;
   font-size: 0.77em;

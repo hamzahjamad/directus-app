@@ -8,7 +8,8 @@
     />
     <p>
       Try again later or
-      <router-link to="/logout">login to another instance</router-link>.
+      <router-link to="/logout">login to another instance</router-link>
+      .
     </p>
   </div>
 
@@ -24,7 +25,7 @@
   <div
     v-else-if="!publicRoute"
     :style="{
-      '--accent': `var(--${color})`
+      '--brand': `var(--${color})`
     }"
   >
     <div v-if="hydrated" class="directus">
@@ -64,7 +65,12 @@ export default {
   },
   computed: {
     ...mapState({
-      color: state => state.settings.values.color || "light-blue-600"
+      color: state =>
+        state.settings.values.color ||
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--brand")
+          .trim(),
+      infoActive: state => state.sidebars.info
     }),
     publicRoute() {
       return this.$route.meta.publicRoute || false;
@@ -95,20 +101,9 @@ export default {
     $route() {
       this.bodyClass();
       this.$store.commit(TOGGLE_NAV, false);
-      this.infoActive = false;
     },
     infoActive(visible) {
-      const className =
-        this.$route.meta && this.$route.meta.infoSidebarWidth === "wide"
-          ? "info-wide-active"
-          : "info-active";
-
-      if (visible) {
-        document.body.classList.add(className);
-      } else {
-        document.body.classList.remove("info-wide-active");
-        document.body.classList.remove("info-active");
-      }
+      this.toggleInfoSidebarBodyClass(visible);
     },
     hydratingError(newVal) {
       if (newVal) {
@@ -126,16 +121,32 @@ export default {
       } else {
         document.body.classList.remove("no-padding");
       }
+
+      this.toggleInfoSidebarBodyClass();
     },
     keepEditing() {
       this.$router.push(
-        `/collections/${this.$store.state.edits.collection}/${
-          this.$store.state.edits.primaryKey
-        }`
+        `/collections/${this.$store.state.edits.collection}/${this.$store.state.edits.primaryKey}`
       );
     },
     discardChanges() {
       this.$store.dispatch("discardChanges");
+    },
+
+    toggleInfoSidebarBodyClass(visible = null) {
+      if (visible === null) visible = this.infoActive;
+
+      const className =
+        this.$route.meta && this.$route.meta.infoSidebarWidth === "wide"
+          ? "info-wide-active"
+          : "info-active";
+
+      if (visible) {
+        document.body.classList.add(className);
+      } else {
+        document.body.classList.remove("info-wide-active");
+        document.body.classList.remove("info-active");
+      }
     }
   }
 };
@@ -148,6 +159,14 @@ body.no-padding {
   &::before {
     display: none;
   }
+}
+
+body.info-active {
+  padding-right: 284px;
+}
+
+body.info-wide-active {
+  padding-right: 284px;
 }
 </style>
 

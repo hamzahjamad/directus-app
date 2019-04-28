@@ -24,7 +24,7 @@
             <header v-if="title">
               <h1 id="modal-title" class="style-1">{{ title }}</h1>
               <button v-if="!actionRequired" @click="$emit('close')">
-                <i class="material-icons">close</i>
+                <v-icon name="close" />
               </button>
             </header>
 
@@ -65,8 +65,9 @@
                 :loading="button.loading || false"
                 :disabled="button.disabled || false"
                 @click="$emit(id)"
-                >{{ button.text }}</v-button
               >
+                {{ button.text }}
+              </v-button>
             </div>
           </div>
         </aside>
@@ -166,7 +167,7 @@ export default {
   position: relative;
   margin: 0 auto;
   width: 90%;
-  max-width: 680px;
+  max-width: 690px;
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -203,10 +204,10 @@ export default {
   }
 
   header {
-    border-bottom: 1px solid var(--lightest-gray);
     position: sticky;
     top: 0;
-    height: 60px;
+    height: 64px;
+    background-color: var(--lightest-gray);
   }
 
   .body {
@@ -223,8 +224,8 @@ export default {
   }
 
   .footer {
-    border-top: 1px solid var(--lightest-gray);
-    height: 60px;
+    border-top: 2px solid var(--lightest-gray);
+    height: 64px;
   }
 
   button:not(.confirm) {
@@ -262,7 +263,7 @@ export default {
   padding: 0;
   list-style: none;
   justify-content: center;
-  border-bottom: 1px solid var(--lightest-gray);
+  border-bottom: 2px solid var(--lightest-gray);
   position: sticky;
   top: 0;
   background-color: var(--white);
@@ -273,7 +274,7 @@ export default {
     flex-shrink: 1;
     max-width: 120px;
     flex-basis: 120px;
-    height: 50px;
+    height: 48px;
     position: relative;
     color: var(--gray);
 
@@ -292,18 +293,18 @@ export default {
       display: block;
       width: 100%;
       position: absolute;
-      height: 3px;
+      height: 2px;
       bottom: -2px;
-      background-color: var(--accent);
+      background-color: var(--darkest-gray);
       transform: scaleY(0);
       transition: transform var(--fast) var(--transition-out);
     }
 
     &.active {
-      color: var(--accent);
+      color: var(--darker-gray);
 
       &:hover {
-        color: var(--accent);
+        color: var(--darkest-gray);
       }
 
       &::after {

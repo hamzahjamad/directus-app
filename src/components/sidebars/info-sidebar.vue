@@ -1,27 +1,8 @@
 <template>
   <div>
-    <v-blocker
-      :z-index="9"
-      v-show="active"
-      @click="disableSidebar"
-      class="blocker-info"
-    />
-    <transition name="info">
-      <aside
-        class="info-sidebar"
-        v-if="active && !itemDetail"
-        :class="{ wide }"
-      >
-        <div class="system"><slot name="system" /></div>
-        <slot />
-      </aside>
-    </transition>
-
-    <aside
-      class="info-sidebar"
-      v-if="itemDetail"
-      :class="[{ wide, 'hide-when-small': !active }, 'info-leave-active']"
-    >
+    <v-blocker :z-index="9" v-show="active" @click="disableSidebar" class="blocker-info" />
+    <aside class="info-sidebar" v-if="active" :class="{ wide }">
+      <div class="system"><slot name="system" /></div>
       <slot />
     </aside>
   </div>
@@ -55,6 +36,11 @@ export default {
     disableSidebar() {
       this.$store.commit(TOGGLE_INFO, false);
     }
+  },
+  created() {
+    if (this.itemDetail && window.innerWidth > 1235) {
+      this.$store.commit(TOGGLE_INFO, true);
+    }
   }
 };
 </script>
@@ -63,13 +49,12 @@ export default {
 .info-sidebar {
   position: fixed;
   right: 0;
-  bottom: 0;
-  height: calc(100% - var(--header-height));
-  z-index: 10;
+  top: 0;
+  height: 100%;
+  z-index: 30;
   transition: var(--slow) var(--transition-out);
   width: 90%;
-  background-color: var(--white);
-  border-left: 1px solid var(--lightest-gray);
+  background-color: var(--lightest-gray);
   padding: 20px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -81,11 +66,7 @@ export default {
   }
 
   @media (min-width: 800px) {
-    max-width: var(--nav-sidebar-width);
-
-    &.wide {
-      max-width: var(--info-sidebar-width);
-    }
+    max-width: var(--info-sidebar-width);
   }
 }
 
@@ -105,16 +86,6 @@ export default {
 .blocker-info {
   @media (min-width: 1235px) {
     display: none;
-  }
-}
-
-.hide-when-small {
-  visibility: hidden;
-  transform: translateX(100%);
-
-  @media (min-width: 1235px) {
-    visibility: visible;
-    transform: initial;
   }
 }
 </style>

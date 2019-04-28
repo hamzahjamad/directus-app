@@ -1,6 +1,6 @@
 <template>
   <div v-if="error">
-    <v-header />
+    <v-header :icon-link="`/settings/roles`" icon-color="warning" />
     <v-error
       v-if="error"
       icon="error_outline"
@@ -11,14 +11,15 @@
   </div>
 
   <div class="settings-permissions" v-else>
-    <v-header :breadcrumb="breadcrumb">
+    <v-header :breadcrumb="breadcrumb" icon-link="/settings/roles" icon-color="warning">
       <template slot="buttons">
         <v-header-button
           v-if="!isNew && !isSystem"
           :loading="removing"
           :label="$t('delete')"
           icon="delete_outline"
-          color="danger"
+          color="gray"
+          hover-color="danger"
           @click="confirmRemove = true"
         />
         <v-header-button
@@ -33,7 +34,9 @@
     </v-header>
 
     <label>{{ $t("permissions") }}</label>
-    <p v-if="isAdmin" class="admin-note">{{ $t("permissions_admin") }}</p>
+    <v-notice v-if="isAdmin" color="warning" class="admin-note">
+      {{ $t("permissions_admin") }}
+    </v-notice>
     <v-permissions
       v-else
       :loading="!(permissions && statuses)"
@@ -46,7 +49,7 @@
     <v-form
       v-if="fields && role"
       :fields="fields"
-      :values="role"
+      :values="{ ...role, ...roleEdits }"
       collection="directus_roles"
       @stage-value="stageValue"
     />
@@ -77,9 +80,9 @@ export default {
     if (!this.role) return;
 
     return {
-      title: `${this.$t("settings")} | ${this.$helpers.formatTitle(
-        this.role.name
-      )} ${this.$t("permissions")}`
+      title: `${this.$t("settings")} | ${this.$helpers.formatTitle(this.role.name)} ${this.$t(
+        "permissions"
+      )}`
     };
   },
   components: {
@@ -125,7 +128,7 @@ export default {
       return this.$store.state.collections;
     },
     breadcrumb() {
-      if (!this.role) return [];
+      if (!this.role) return null;
 
       if (this.isNew) {
         return [
@@ -148,8 +151,7 @@ export default {
       return [
         {
           name: this.$t("settings"),
-          path: "/settings",
-          color: "warning"
+          path: "/settings"
         },
         {
           name: this.$t("roles"),
@@ -162,10 +164,7 @@ export default {
       ];
     },
     editing() {
-      return (
-        Object.keys(this.roleEdits).length > 0 ||
-        Object.keys(this.permissionEdits).length > 0
-      );
+      return Object.keys(this.roleEdits).length > 0 || Object.keys(this.permissionEdits).length > 0;
     },
     permissions() {
       if (!this.statuses) return null;
@@ -208,20 +207,14 @@ export default {
             status
           };
 
-          if (
-            this.savedPermissions[collection] &&
-            this.savedPermissions[collection][status]
-          ) {
+          if (this.savedPermissions[collection] && this.savedPermissions[collection][status]) {
             permissions[collection][status] = {
               ...permissions[collection][status],
               ...this.savedPermissions[collection][status]
             };
           }
 
-          if (
-            this.permissionEdits[collection] &&
-            this.permissionEdits[collection][status]
-          ) {
+          if (this.permissionEdits[collection] && this.permissionEdits[collection][status]) {
             permissions[collection][status] = {
               ...permissions[collection][status],
               ...this.permissionEdits[collection][status]
@@ -317,6 +310,7 @@ export default {
           this.$store.dispatch("loadingFinished", id);
           this.saving = false;
           this.$router.push("/settings/roles");
+          this.$store.dispatch("getCurrentUser");
         })
         .catch(error => {
           this.$store.dispatch("loadingFinished", id);
@@ -336,8 +330,7 @@ export default {
       return this.$api.updateRole(this.role.id, this.roleEdits);
     },
     savePermissions() {
-      if (Object.keys(this.permissionEdits).length === 0)
-        return Promise.resolve();
+      if (Object.keys(this.permissionEdits).length === 0) return Promise.resolve();
 
       // We have to split up all the edits in updates and to-be-created items
       // because they need to be send to the API with a different HTTP Method
@@ -399,9 +392,7 @@ export default {
           }
 
           const id =
-            (this.savedPermissions[collection] &&
-              this.savedPermissions[collection].id) ||
-            null;
+            (this.savedPermissions[collection] && this.savedPermissions[collection].id) || null;
 
           if (id) {
             update.push({
@@ -419,12 +410,8 @@ export default {
       });
 
       return Promise.all([
-        create.length > 0
-          ? this.$api.createPermissions(create)
-          : Promise.resolve(),
-        update.length > 0
-          ? this.$api.updatePermissions(update)
-          : Promise.resolve()
+        create.length > 0 ? this.$api.createPermissions(create) : Promise.resolve(),
+        update.length > 0 ? this.$api.updatePermissions(update) : Promise.resolve()
       ]);
     },
     remove() {
@@ -492,9 +479,7 @@ export default {
 
           this.statuses = this.$lodash.keyBy(
             fields
-              .filter(
-                field => field.type && field.type.toLowerCase() === "status"
-              )
+              .filter(field => field.type && field.type.toLowerCase() === "status")
               .map(field => ({
                 mapping: field.options.status_mapping,
                 collection: field.collection
@@ -573,10 +558,6 @@ h2 {
 }
 
 .admin-note {
-  color: var(--warning);
-  font-size: 1.2rem;
-  line-height: 1.1;
-  font-weight: 400;
   margin-bottom: 40px;
 }
 </style>

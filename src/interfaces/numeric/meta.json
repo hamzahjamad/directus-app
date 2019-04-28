@@ -1,0 +1,59 @@
+{
+  "name": "$t:numeric",
+  "version": "1.0.1",
+  "types": ["integer", "decimal"],
+  "icon": "dialpad",
+  "recommended": {
+    "length": 10
+  },
+  "options": {
+    "placeholder": {
+      "name": "$t:placeholder",
+      "comment": "$t:placeholder_comment",
+      "interface": "text-input",
+      "length": 100
+    },
+    "localized": {
+      "name": "$t:localized",
+      "comment": "$t:localized_comment",
+      "interface": "toggle",
+      "default": true
+    },
+    "iconLeft": {
+      "name": "$t:icon_left",
+      "comment": "$t:icon_left_comment",
+      "interface": "icon",
+      "advanced": true
+    },
+    "iconRight": {
+      "name": "$t:icon_right",
+      "comment": "$t:icon_right_comment",
+      "interface": "icon",
+      "advanced": true
+    }
+  },
+  "translation": {
+    "en-US": {
+      "numeric": "Numeric",
+      "placeholder": "Placeholder",
+      "placeholder_comment": "Enter placeholder text",
+      "localized": "Localized",
+      "localized_comment": "Localize the output to the user's locale",
+      "icon_left": "Icon Left",
+      "icon_left_comment": "Choose an optional icon to display on the left of the input",
+      "icon_right": "Icon Right",
+      "icon_right_comment": "Choose an optional icon to display on the right of the input"
+    },
+	"fr-FR": {
+      "numeric": "Numérique",
+      "placeholder": "Paramètre fictif",
+      "placeholder_comment": "Texte statique qui est affiché avant la sélection d'une valeur",
+      "localized": "Localisé",
+      "localized_comment": "Afficher la sortie dans le format local de l'utilisateur",
+      "icon_left": "Icone de gauche",
+      "icon_left_comment": "Choisir l'icone optionnelle à afficher à gauche de l'entrée",
+      "icon_right": "Icone de droite",
+      "icon_right_comment": "Choisir l'icone optionnelle à afficher à droite de l'entrée"
+    }
+  }
+}

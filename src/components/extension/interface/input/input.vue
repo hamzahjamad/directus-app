@@ -132,8 +132,7 @@ export default {
 
       // Lookup the raw db datatype based on the current vendor in the type-map
       // to extract the fallback interface to use.
-      const fallback =
-        datatypes[this.databaseVendor][this.datatype].fallbackInterface;
+      const fallback = datatypes[this.databaseVendor][this.datatype].fallbackInterface;
 
       return this.interfaces[fallback];
     }
@@ -154,13 +153,18 @@ export default {
       // If component already exists, do nothing
       if (componentExists(this.componentName)) return;
 
-      const filePath = `${this.$api.url}/${this.interface.path.replace(
-        "meta.json",
-        "input.js"
-      )}`;
+      let component;
+
+      if (this.interface.core) {
+        component = import("@/interfaces/" + this.interface.id + "/input.vue");
+      } else {
+        const filePath = `${this.$api.url}/${this.interface.path.replace("meta.json", "input.js")}`;
+
+        component = loadExtension(filePath);
+      }
 
       Vue.component(this.componentName, () => ({
-        component: loadExtension(filePath),
+        component: component,
         error: InputFallback,
         loading: InputLoading
       }));

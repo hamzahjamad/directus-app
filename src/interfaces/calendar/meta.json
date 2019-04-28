@@ -1,0 +1,47 @@
+{
+	"name": "$t:calendar",
+	"version": "1.0.0",
+	"types": ["date"],
+  "icon": "event",
+	"options": {
+    "min": {
+      "name": "$t:min",
+      "comment": "$t:min_comment",
+      "interface": "date"
+    },
+    "max": {
+      "name": "$t:max",
+      "comment": "$t:max_comment",
+      "interface": "date"
+    },
+    "formatting": {
+      "name": "$t:formatting",
+      "comment": "$t:formatting_comment",
+      "interface": "text-input",
+      "options": {
+        "placeholder": "dddd, mmmm dS"
+      },
+      "length": 50
+    }
+  },
+  "translation": {
+    "en-US": {
+      "calendar": "Calendar",
+      "min": "Minimum Date",
+      "min_comment": "Minimum date that can be chosen by the user",
+      "max": "Maximum Date",
+      "max_comment": "Maximum date that can be chosen by the user",
+      "formatting": "Date Format",
+      "formatting_comment": "If left blank, a relative date will be used"
+    },
+	"fr-FR": {
+      "calendar": "Calendrier",
+      "min": "Date minimum",
+      "min_comment": "Date minimale qui peut être sélectionnée par l'utilisateur",
+      "max": "Date maximum",
+      "max_comment": "Date maximale qui peut être sélectionnée par l'utilisateur",
+      "formatting": "Format de date",
+      "formatting_comment": "Si laissé vide, alors une date relative sera utilisée"
+    }
+  }
+}

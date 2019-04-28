@@ -25,7 +25,7 @@ export default {
   admin_password: "Katalaluan Pentadbir",
   additional_info: "Maklumat Tambahan",
   add_new: "Tambah Baru",
-  add_field_filter: "Tambah penapis medan", 
+  add_field_filter: "Tambah penapis medan",
   add_note: "Tambah nota berguna untuk pengguna...",
   admin_settings: "Tetapan Pentadbir",
   almost_done_options:
@@ -71,8 +71,7 @@ export default {
   coming_soon: "Akan Datang",
   contains: "Mengandungi",
   config_error: "Konfigurasi Hilang",
-  config_error_copy:
-    "Pastikan anda telah membuat fail konfigurasi aplikasi",
+  config_error_copy: "Pastikan anda telah membuat fail konfigurasi aplikasi",
   collection_contains_items: "{collection} mengandungi {count} benda",
   currently_selected: "Sedang dipilih: {thing}",
   create: "Cipta",
@@ -92,8 +91,7 @@ export default {
   embed: "Benamkan",
   embed_placeholder: "YouTube, Vimeo, atau pautan lain",
   fieldtypes: {
-    alias:
-      "Medan yang tidak menyimpan data atau tidak mempunyai lajur pangkalan data yang sepadan",
+    alias: "Medan yang tidak menyimpan data atau tidak mempunyai lajur pangkalan data yang sepadan",
     array: "Respon API dalam format tatasusunan standard",
     datetime: "Tarikh dan masa dalam format ISO, contoh: 2018-09-19T14:00:43.381Z",
     date: "Tarikh, contoh: 2018-09-19",
@@ -148,14 +146,11 @@ export default {
 
       DECIMAL:
         "Nombor yang tepat (misalnya: untuk mata wang), dengan panjang 1 hingga 65 digit (L) dan 0 hingga 30 digit perpuluhan (D). Format panjang: `L, D`",
-      FLOAT:
-        "Nombor binari secara anggaran, 4 bait dengan titik perpuluhan terapung.",
-      DOUBLE:
-        "Nombor binari secara anggaran, 8 bait dengan titik perpuluhan terapung.",
+      FLOAT: "Nombor binari secara anggaran, 4 bait dengan titik perpuluhan terapung.",
+      DOUBLE: "Nombor binari secara anggaran, 8 bait dengan titik perpuluhan terapung.",
 
       DATE: "Tarikh. Dibenarkan `1000-01-01` hingga `9999-12-31`.",
-      DATETIME:
-        "Tarikh dan masa. Dibenarkan `1000-01-01 00:00:00` hingga `9999-12-31 23:59:59`.",
+      DATETIME: "Tarikh dan masa. Dibenarkan `1000-01-01 00:00:00` hingga `9999-12-31 23:59:59`.",
       TIMESTAMP:
         "Tarikh dan masa. Dibenarkan `1970-01-01 00:00:01` UTC hingga `2038-01-19 03:14:07` UTC.",
       TIME: "Masa. Dibenarkan `-838:59:59` hingga `838:59:59`.",
@@ -188,7 +183,8 @@ export default {
   dialog_beginning: "Permulaan bagi tetingkap dialog",
   discard_changes: "Buang Perubahan",
   display_name: "Paparkan Nama",
-  drop_files: "Tidak Dapat Lepaskan Fail-Fail | Lepaskan fail disini |  Lepaskan fail-fail disini...",
+  drop_files:
+    "Tidak Dapat Lepaskan Fail-Fail | Lepaskan fail disini |  Lepaskan fail-fail disini...",
   dont_show: "Sembunyikan",
   editing: "Menyunting Benda: {collection}",
   editing_item: "Menyunting Benda",
@@ -224,6 +220,7 @@ export default {
   field_created: "{field} Medan Dicipta",
   field_updated: "{field} Medan Dikemaskini",
   field_removed: "{field} Medan Dibuang",
+  field_already_exists: "{field} Sudah wujud",
   fields: "Medan-medan",
   fields_are_saved_instantly: "Perubahan disimpan dengan serta-merta",
   file: "Fail",
@@ -258,8 +255,7 @@ export default {
   item_count: "Tiada Benda | Satu Benda | {count} Benda",
   event_count: "tiada Peristiwa | Satu Peristiwa | {count} Peristiwa",
   role_count: "Tiada Peranan | Satu Peranan | {count} Peranan",
-  item_count_filter:
-    "Tiada Benda yang Ditapis | Satu Benda Ditapis | {count} Benda Ditapis",
+  item_count_filter: "Tiada Benda yang Ditapis | Satu Benda Ditapis | {count} Benda Ditapis",
   item_deleted: "Benda telah dipadam",
   item_saved: "Benda telah disimpan | {count} Benda telah disimpan",
   junction_collection: "Koleksi Persimpangan",
@@ -267,8 +263,7 @@ export default {
     "Anda tidak boleh melumpuhkan kunci primer pada medan yang ada. Keluarkan medan ini.",
   extension_error: "Terdapat masalah memuatkan sambungan {ext}.",
   extensions_missing: "Tiada Sambungan Dijumpai",
-  extensions_missing_copy:
-    "Pastikan anda telah memasang sambungan sistem.",
+  extensions_missing_copy: "Pastikan anda telah memasang sambungan sistem.",
   latency: "Kependaman",
   learn_more: "Ketahui lebih lanjut",
   leave_comment: "Tinggalkan komen...",
@@ -293,21 +288,18 @@ export default {
   not_between: "Bukan Diantara",
   not_contains: "Tidak mengandungi",
   note: "Nota",
-  note_note: "Keterangan dalaman...",//
-  note_hidden:
-    "[Ketahui lebih lanjut](https://docs.directus.io/guides/collections.html#hidden)",
+  note_note: "Keterangan dalaman...", //
+  note_hidden: "[Ketahui lebih lanjut](https://docs.directus.io/guides/collections.html#hidden)",
   note_icon: "Ikon yang dipaparkan dalam bar sisi navigasi aplikasi",
   note_managed:
     "[Ketahui lebih lanjut](https://docs.directus.io/guides/collections.html#managing-collections)",
-  note_single:
-    "[Ketahui lebih lanjut](https://docs.directus.io/guides/collections.html#single)",
+  note_single: "[Ketahui lebih lanjut](https://docs.directus.io/guides/collections.html#single)",
   no_results: "Tiada keputusan",
   no_results_body: "Penapis semasa tidak sepadan dengan sebarang benda dalam koleksi",
   no_collections: "Tiada Persediaan Koleksi",
   no_collections_body: "Nampaknya belum ada persediaan koleksi lagi",
   no_fields: "Tiada Persediaan Medan",
-  no_fields_body:
-    "Nampaknya koleksi ini tidak mempunyai persediaan medan lagi",
+  no_fields_body: "Nampaknya koleksi ini tidak mempunyai persediaan medan lagi",
   no_files: "Fail Tiada",
   no_files_body: "Nampaknya belum ada sebarang fail yang dimuat naik lagi",
   numeric: "Angka",
@@ -416,11 +408,9 @@ export default {
   settings_saved: "Settings Saved Tetapan Disimpan",
   server_details: "Butiran Pelayan",
   server_error: "Ralat Pelayan",
-  server_error_copy:
-    "Sesuatu yang salah dengan pelayan atau pangkalan data ini.",
+  server_error_copy: "Sesuatu yang salah dengan pelayan atau pangkalan data ini.",
   server_trouble: "Masalah Pelayan",
-  server_trouble_copy:
-    "Cuba lagi kemudian atau hubungi pentadbir sistem anda.",
+  server_trouble_copy: "Cuba lagi kemudian atau hubungi pentadbir sistem anda.",
   advanced_options: "Pilihan lanjutan",
   show_directus_collections: "Tunjukkan Koleksi Sistem Directus",
   something_went_wrong: "Ada yang salah.",

@@ -5,7 +5,8 @@ import {
   LOGOUT,
   REFRESH_TOKEN,
   REMOVE_AUTH_ERROR,
-  CHANGE_API
+  CHANGE_API,
+  SWITCH_PROJECT
 } from "../../mutation-types";
 
 const mutations = {
@@ -50,6 +51,13 @@ const mutations = {
   [CHANGE_API](state, { url, project }) {
     state.url = url;
     state.project = project;
+  },
+  [SWITCH_PROJECT](state, obj) {
+    state.project = obj.project ? obj.project : null;
+    state.url = obj.url ? obj.url : null;
+    state.projectName = obj.projectName;
+    // @todo check for and enable usage of static or SSO token
+    state.token = null;
   }
 };
 

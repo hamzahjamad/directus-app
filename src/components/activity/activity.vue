@@ -1,11 +1,7 @@
 <template>
   <div class="v-activity">
     <form
-      v-show="
-        commentPermission !== 'none' &&
-          commentPermission !== 'read' &&
-          show !== 'activity'
-      "
+      v-show="commentPermission !== 'none' && commentPermission !== 'read'"
       class="new-comment"
       @submit.prevent="postComment"
     >
@@ -27,42 +23,29 @@
       class="activity-item"
       :key="activity.id"
     >
-      <i
-        v-if="activity.action && activity.action.toLowerCase() === 'comment'"
-        v-tooltip="$t('comment')"
-        class="material-icons"
-        >message</i
-      >
       <span
-        v-else
         v-tooltip="$helpers.formatTitle(activity.action)"
         :class="activity.action"
         class="indicator"
       />
 
       <div class="content">
-        <details
-          v-if="
-            activity.action !== 'external' && activity.changes && activity.name
-          "
-        >
-          <summary class="title"
-            >{{ activity.name }}<span v-if="activity.date">•</span
-            ><v-timeago
+        <details v-if="activity.action !== 'external' && activity.changes && activity.name">
+          <summary class="title">
+            <span class="name">{{ activity.name }}</span>
+            <v-timeago
               v-if="activity.date"
               v-tooltip="{
                 content: $d(activity.date, 'long'),
                 delay: { show: 1500, hide: 100 }
               }"
               :auto-update="1"
-              :since="activity.date"
+              :datetime="activity.date"
               :locale="$i18n.locale"
               class="date"
             />
-            <i class="material-icons chevron" v-tooltip="'Revision Details'"
-              >chevron_left</i
-            ></summary
-          >
+            <v-icon class="chevron" v-tooltip="'Rivision Details'" name="chevron_left" size="18" />
+          </summary>
           <div v-if="activity.changes">
             <v-diff :changes="activity.changes" />
             <button
@@ -71,20 +54,20 @@
               class="revert"
               @click="$emit('revert', activity)"
             >
-              <i class="material-icons">restore</i>
+              <v-icon name="restore" />
             </button>
           </div>
         </details>
         <div class="title" v-else-if="activity.name">
-          {{ activity.name }}<span v-if="activity.date">•</span
-          ><v-timeago
+          <span class="name">{{ activity.name }}</span>
+          <v-timeago
             v-if="activity.date"
             v-tooltip="{
               content: $d(activity.date, 'long'),
               delay: { show: 1500, hide: 100 }
             }"
             :auto-update="1"
-            :since="activity.date"
+            :datetime="activity.date"
             :locale="$i18n.locale"
             class="date"
           />
@@ -93,8 +76,7 @@
           v-if="activity.htmlcomment"
           v-html="activity.htmlcomment"
           :class="{
-            comment:
-              activity.action && activity.action.toLowerCase() === 'comment'
+            comment: activity.action && activity.action.toLowerCase() === 'comment'
           }"
         ></p>
       </div>
@@ -128,49 +110,22 @@ export default {
       type: Boolean,
       default: false
     },
-    show: {
-      type: String,
-      default: "both"
-    },
     commentPermission: {
       type: String,
       default: "none"
     }
   },
   computed: {
-    activityFiltered() {
-      switch (this.show) {
-        case "comments":
-          return this.commentPermission === "none"
-            ? []
-            : this.activity.filter(item => item.comment !== null);
-        case "activity":
-          return this.activity.filter(item => item.comment === null);
-        case "both":
-        default:
-          return this.activity.filter(item => {
-            if (this.commentPermission === "none") {
-              if (item.comment != null) return false;
-            }
-
-            return true;
-          });
-      }
-    },
     activityWithChanges() {
-      const activityWithChanges = this.activityFiltered.map((activity, i) => ({
+      const activityWithChanges = this.activity.map((activity, i) => ({
         ...activity,
         changes: this.getChanges(activity.id, i),
         revision: this.revisions[activity.id]
       }));
 
-      if (activityWithChanges.length === 0) return [];
+      const lastItem = activityWithChanges && activityWithChanges[activityWithChanges.length - 1];
 
-      const lastItem =
-        activityWithChanges &&
-        activityWithChanges[activityWithChanges.length - 1];
-
-      if (!lastItem && this.show !== "comments") {
+      if (!lastItem) {
         activityWithChanges.push({
           action: "external",
           comment: this.$t("activity_outside_directus"),
@@ -214,18 +169,30 @@ export default {
 
       let previousUpdate = null;
 
-      for (let i = index + 1; i < this.activityFiltered.length; i++) {
+      for (let i = index + 1; i < this.activity.length; i++) {
         if (
-          this.activityFiltered[i].action === "update" ||
-          this.activityFiltered[i].action === "create" ||
-          this.activityFiltered[i].action === "upload"
+          this.activity[i].action === "update" ||
+          this.activity[i].action === "create" ||
+          this.activity[i].action === "upload"
         ) {
-          previousUpdate = this.activityFiltered[i];
+          previousUpdate = this.activity[i];
           break;
         }
       }
 
-      if (!previousUpdate) return null;
+      if (!previousUpdate) {
+        if (this.activity[index].action === "create") {
+          const data = revision.data;
+
+          return this.$lodash.mapValues(data, (value, field) => ({
+            before: null,
+            after: value,
+            field: field
+          }));
+        }
+
+        return null;
+      }
 
       const previousRevision = this.revisions[previousUpdate.id];
       const previousData = (previousRevision && previousRevision.data) || {};
@@ -252,49 +219,40 @@ export default {
   &::before {
     content: "";
     position: absolute;
-    left: 6px;
-    height: 100%;
-    width: 1px;
-    background-color: var(--lightest-gray);
+    left: 4px;
+    top: 80px;
+    bottom: 8px;
+    width: 2px;
+    background-color: var(--lighter-gray);
     z-index: -1;
   }
 
   .indicator {
     position: relative;
-    top: 1px;
+    top: 4px;
     display: inline-block;
-    width: 13px;
-    height: 13px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    border: 2px solid;
-    background-color: var(--white);
-    box-shadow: 0 0 0 5px var(--white);
+    background-color: var(--lighter-gray);
+    // box-shadow: 0 0 0 5px var(--lightest-gray);
     flex-shrink: 0;
 
     &.update {
-      border-color: var(--action);
+      background-color: var(--action);
     }
     &.delete {
-      border-color: var(--danger);
+      background-color: var(--danger);
     }
     &.add {
-      border-color: var(--success);
+      background-color: var(--success);
     }
     &.external {
-      border-color: var(--gray);
+      background-color: var(--lighter-gray);
     }
     &.upload {
-      border-color: var(--purple-500);
+      background-color: var(--purple-500);
     }
-  }
-
-  i.material-icons {
-    width: 13px;
-    background-color: var(--white);
-    font-size: 24px;
-    transform: translateX(-6px);
-    height: 20px;
-    color: var(--lighter-gray);
   }
 
   article {
@@ -306,20 +264,21 @@ export default {
     margin-left: 10px;
     flex-grow: 1;
 
+    .name {
+      font-weight: 500;
+      color: var(--darkest-gray);
+    }
+
+    .date {
+      color: var(--light-gray);
+      margin-left: 8px;
+    }
+
     .title {
       list-style-type: none;
 
       &::-webkit-details-marker {
         display: none;
-      }
-
-      span,
-      .date {
-        color: var(--light-gray);
-      }
-
-      span {
-        margin: 0 5px;
       }
     }
 
@@ -345,31 +304,31 @@ export default {
 
     .revert {
       transition: all var(--fast) var(--transition);
-      background-color: var(--lightest-gray);
+      background-color: var(--lighter-gray);
       border-radius: var(--border-radius);
       padding: 4px;
       margin: 14px auto;
       width: 100%;
-      &:hover {
-        background-color: var(--lighter-gray);
-        i.material-icons {
-          color: var(--dark-gray);
-        }
-      }
-      i.material-icons {
+      i {
         width: auto;
         height: auto;
         transform: translateX(0);
         background-color: inherit;
         font-size: 24px;
-        color: var(--gray);
+        color: var(--lightest-gray);
+      }
+      &:hover {
+        background-color: var(--dark-gray);
+        i.material-icons {
+          color: var(--white);
+        }
       }
     }
 
     .comment {
       position: relative;
-      background-color: var(--lightest-gray);
-      color: var(--light-gray);
+      background-color: var(--white);
+      color: var(--dark-gray);
       border-radius: var(--border-radius);
       padding: 8px 10px;
       display: inline-block;
@@ -388,10 +347,10 @@ export default {
         border-color: transparent transparent var(--lightest-gray) transparent;
       }
       a {
-        color: var(--accent);
+        color: var(--darker-gray);
         text-decoration: none;
         &:hover {
-          color: var(--accent-dark);
+          color: var(--darkest-gray);
         }
       }
       strong {
@@ -420,9 +379,9 @@ export default {
         font-size: 1.2em;
         font-weight: 400;
         margin: 20px 10px 20px 10px;
-        border-left: 2px solid var(--accent);
+        border-left: 2px solid var(--lighter-gray);
         padding-left: 10px;
-        color: var(--accent);
+        color: var(--darkest-gray);
         line-height: 1.4em;
       }
       hr {
@@ -449,24 +408,21 @@ export default {
   .textarea {
     height: 100%;
     resize: none;
-    box-shadow: 0px 5px 0px 0px rgba(255, 255, 255, 1);
   }
 
   button {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 0.875rem;
+    bottom: 8px;
+    right: 12px;
     transition: var(--fast) var(--transition);
     transition-property: color, opacity;
+    font-weight: var(--weight-bold);
     opacity: 0;
-
-    color: var(--accent);
+    color: var(--darker-gray);
+    background-color: var(--white);
     cursor: pointer;
     &:hover {
-      color: var(--accent-dark);
+      color: var(--darkest-gray);
     }
 
     &[disabled] {
@@ -490,10 +446,10 @@ export default {
 <style lang="scss">
 .v-activity .content .comment {
   a {
-    color: var(--accent);
-    text-decoration: none;
+    // color: var(--darker-gray);
+    // text-decoration: underline;
     &:hover {
-      color: var(--accent-dark);
+      color: var(--darkest-gray);
     }
   }
   strong {
@@ -523,9 +479,9 @@ export default {
     font-size: 1.2em;
     font-weight: 400;
     margin: 20px 10px 20px 10px;
-    border-left: 2px solid var(--accent);
+    border-left: 2px solid var(--lighter-gray);
     padding-left: 10px;
-    color: var(--accent);
+    color: var(--darkest-gray);
     line-height: 1.4em;
   }
   hr {

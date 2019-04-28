@@ -1,0 +1,92 @@
+{
+  "name": "$t:tags",
+  "version": "1.1.0",
+  "types": ["array", "string"],
+  "icon": "local_offer",
+  "recommended": {
+    "length": 2000
+  },
+  "options": {
+    "alphabetize": {
+      "name": "$t:alphabetize",
+      "comment": "$t:alphabetize_comment",
+      "interface": "toggle",
+      "default": true
+    },
+    "lowercase": {
+      "name": "$t:lowercase",
+      "comment": "$t:lowercase_comment",
+      "interface": "toggle",
+      "default": true
+    },
+    "wrap": {
+      "name": "$t:wrap",
+      "comment": "$t:wrap_comment",
+      "interface": "toggle",
+      "default": false
+    },
+    "format": {
+      "name": "$t:format",
+      "comment": "$t:format_comment",
+      "interface": "toggle",
+      "default": false
+    },
+    "sanitize": {
+      "name": "$t:sanitize",
+      "comment": "$t:sanitize_comment",
+      "interface": "toggle",
+      "default": false
+    },
+    "iconLeft": {
+      "name": "$t:icon_left",
+      "comment": "$t:icon_left_comment",
+      "interface": "icon",
+      "advanced": true
+    },
+    "iconRight": {
+      "name": "$t:icon_right",
+      "comment": "$t:icon_right_comment",
+      "interface": "icon",
+      "default": "local_offer",
+      "advanced": true
+    }
+  },
+  "translation": {
+    "en-US": {
+      "tags": "Tags",
+      "alphabetize": "Alphabetize tags",
+      "alphabetize_comment": "Will rearrange tags to be alphabetical",
+      "lowercase": "Force Lowercase",
+      "lowercase_comment": "Convert all tags to lowercase",
+      "wrap": "Wrap with delimiter",
+      "wrap_comment": "Wrap the values with a pair of delimiters to allow strict searching for a single value",
+      "format": "Format Value",
+      "format_comment": "Convert the tags to Title Case when displaying the value",
+      "sanitize": "Sanitize",
+      "sanitize_comment": "Removes any non-alphanumeric characters and converts spaces to hyphens",
+      "placeholder_text": "Enter tag and then hit enter or comma...",
+      "icon_left": "Icon Left",
+      "icon_left_comment": "Choose an optional icon to display on the left of the input",
+      "icon_right": "Icon Right",
+      "icon_right_comment": "Choose an optional icon to display on the right of the input"
+    },
+	"fr-FR": {
+      "tags": "Etiquettes",
+      "alphabetize": "Rangement alphabétique des étiquettes",
+      "alphabetize_comment": "Réarrange les étiquettes dans l'ordre alphabétique",
+      "lowercase": "Tout transformer en minuscules",
+      "lowercase_comment": "S'assurer que les étiquettes sont écrites en minuscules",
+      "wrap": "Encapsuler avec un délimiteur",
+      "wrap_comment": "Encapsuler la valeur enregistrée avec une paire de délimiteurs afin de permettre une recherche stricte sur une valeur unitaire",
+      "format": "Formatter en majuscules",
+      "format_comment": "Converti les étiquettes en majuscules pour l'affichage uniquement",
+      "sanitize": "Nettoyage",
+      "sanitize_comment": "Supprime tous les caractère non-alphanumériques et converti les espaces en traits d'union",
+      "placeholder_text": "Saisir l'étiquette et presser la touche entrée ou virgule",
+      "icon_left": "Icon Left",
+      "icon_left_comment": "Choose an optional icon to display on the left of the input",
+      "icon_right": "Icon Right",
+      "icon_right_comment": "Choose an optional icon to display on the right of the input"
+    }
+  }
+}

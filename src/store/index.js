@@ -51,7 +51,8 @@ export function resetState() {
   // This will make a clone to modify, so the original initialStateCopy stays
   // as-is
   const newState = Object.assign({}, initialStateCopy);
+  newState.auth.projectName = store.state.auth.projectName;
+  newState.auth.project = store.state.auth.project;
   newState.auth.url = store.state.auth.url;
-
   store.replaceState(newState);
 }

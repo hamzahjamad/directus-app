@@ -1,5 +1,5 @@
 <template>
-  <component :is="componentName"> <slot /> </component>
+  <component :is="componentName"><slot /></component>
 </template>
 
 <script>
@@ -51,13 +51,18 @@ export default {
         return;
       }
 
-      const filePath = `${this.$api.url}/${this.page.path.replace(
-        "meta.json",
-        "page.js"
-      )}`;
+      let component;
+
+      if (this.page.core) {
+        component = import("@/interfaces/" + this.page.id + "input.vue");
+      } else {
+        const filePath = `${this.$api.url}/${this.page.path.replace("meta.json", "page.js")}`;
+
+        component = loadExtension(filePath);
+      }
 
       Vue.component(this.componentName, () => ({
-        component: loadExtension(filePath),
+        component: component,
         error: pageFallback,
         loading: pageLoading
       }));

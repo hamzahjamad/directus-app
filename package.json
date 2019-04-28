@@ -1,85 +1,82 @@
 {
   "name": "directus",
-  "version": "7.0.18",
+  "version": "7.3.0",
   "private": true,
   "description": "Directus is an Open-Source Headless CMS & API for Managing Custom Databases",
+  "author": "Rijk van Zanten <rijk@rngr.org>",
   "contributors": [
-    "Welling Guzmán <welling@rngr.org>",
-    "Ben Haynes <ben@rngr.org>",
-    "Rijk van Zanten <rijk@rngr.org>"
+    "Ben Haynes <ben@rngr.org>"
   ],
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
+    "build": "vue-cli-service build",
     "test": "vue-cli-service lint",
-    "fix": "prettier --write \"src/**/*.{js,vue}\"",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.4.0",
-    "@vue/cli-plugin-eslint": "^3.4.0",
-    "@vue/cli-plugin-pwa": "^3.3.0",
-    "@vue/cli-service": "^3.4.0",
-    "@vue/eslint-config-prettier": "^3.0.0",
-    "eslint-plugin-vue": "^5.1.0",
-    "node-sass": "^4.11.0",
-    "prettier": "^1.16.3",
-    "sass-loader": "^6.0.6",
-    "vue-eslint-parser": "^5.0.0",
-    "vue-template-compiler": "^2.6.0"
+    "fix": "prettier --write \"src/**/*.{js,vue}\""
   },
   "dependencies": {
+    "@directus/extension-toolkit": "0.0.5",
     "@directus/format-title": "^2.3.1",
-    "@directus/sdk-js": "^5.2.1",
+    "@directus/sdk-js": "^5.3.0",
     "@rijk/jwt-payload": "^1.0.1",
     "axios": "^0.18.0",
     "body-scroll-lock": "^2.6.1",
+    "codemirror": "^5.45.0",
     "convert-range": "^1.1.0",
-    "date-fns": "^1.29.0",
-    "filesize": "^3.6.1",
+    "core-js": "^2.6.5",
+    "cropperjs": "^1.5.1",
+    "date-fns": "^2.0.0-alpha.27",
+    "dateformat": "^3.0.3",
+    "flatpickr": "^4.5.7",
+    "hex-rgb": "^4.0.0",
     "idlejs": "^2.0.1",
-    "lodash": "^4.17.5",
+    "jsonlint-mod": "^1.7.4",
+    "leaflet": "^1.4.0",
+    "lodash": "^4.17.11",
+    "marked": "^0.6.2",
+    "medium-editor": "^5.23.3",
     "micromustache": "^5.4.0",
-    "mousetrap": "^1.6.2",
-    "portal-vue": "^1.5.1",
-    "shortid": "^2.2.12",
+    "mousetrap": "^1.6.3",
+    "portal-vue": "^2.0.1",
+    "quill": "^1.3.6",
+    "quill-image-upload": "^0.1.3",
+    "shortid": "^2.2.14",
+    "slug": "^1.1.0",
     "snarkdown": "^1.2.2",
-    "v-tooltip": "^2.0.0-rc.33",
-    "vue": "^2.6.0",
-    "vue-i18n": "^7.8.1",
-    "vue-meta": "^1.5.8",
-    "vue-router": "^3.0.2",
+    "v-tooltip": "^2.0.1",
+    "vue": "^2.6.6",
+    "vue-codemirror": "^4.0.6",
+    "vue-flatpickr-component": "^8.1.2",
+    "vue-i18n": "^8.10.0",
+    "vue-meta": "^1.6.0",
+    "vue-router": "^3.0.1",
     "vue-simple-spinner": "^1.2.8",
     "vue-the-mask": "^0.11.1",
-    "vue-timeago": "^4.0.2",
-    "vuedraggable": "^2.17.0",
-    "vuex": "^3.1.0"
+    "vue-timeago": "^5.1.2",
+    "vuedraggable": "^2.20.0",
+    "vuex": "^3.0.1"
   },
-  "babel": {
-    "presets": [
-      "@vue/app"
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.5.0",
+    "@vue/cli-plugin-eslint": "^3.5.0",
+    "@vue/cli-service": "^3.5.0",
+    "@vue/eslint-config-prettier": "^4.0.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fibers": "^3.1.1",
+    "lint-staged": "^8.1.4",
+    "prettier": "^1.16.4",
+    "sass": "^1.17.2",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.5.21"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "vue-cli-service lint",
+      "git add"
     ]
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/prettier"
-    ],
-    "parser": "vue-eslint-parser",
-    "parserOptions": {
-      "parser": "babel-eslint",
-      "ecmaVersion": 8,
-      "sourceType": "module"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 5% in US"
-  ]
+  }
 }

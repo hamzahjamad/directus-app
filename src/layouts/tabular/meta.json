@@ -1,0 +1,18 @@
+{
+  "name": "$t:tabular",
+  "icon": "view_headline",
+  "translation": {
+    "en-US": {
+      "tabular": "Table",
+      "fields": "Fields"
+    },
+    "nl-NL": {
+      "tabular": "Tabel",
+      "fields": "Kolommen"
+    },
+	"fr-FR": {
+      "tabular": "Table",
+      "fields": "Champs"
+    }
+  }
+}

@@ -37,8 +37,14 @@ function setI18nLanguage(lang) {
  * @returns {Promise<string>} The language that was passed
  */
 export function loadLanguageAsync(lang) {
+  if (typeof lang === "undefined") {
+    return;
+  }
   if (i18n.locale !== lang) {
     if (!loadedLanguages.includes(lang)) {
+      // route level code-splitting
+      // this generates a separate chunk (lang-[request].[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       return import(/* webpackChunkName: "lang-[request]" */ `@/lang/locales/${lang}`).then(
         msgs => {
           i18n.setLocaleMessage(lang, msgs.default);
@@ -62,9 +68,10 @@ export const availableLanguages = {
   "fr-FR": "French (France)",
   "de-DE": "German (Germany)",
   "it-IT": "Italian (Italy)",
+  "pl-PL": "Polish (Poland)",
   "pt-BR": "Portuguese (Brazil)",
   "ru-RU": "Russian (Russia)",
-  "ms-MY"   : "Malay (Malaysia)"
+  "ms-MY": "Malay (Malaysia)"
 };
 
 i18n.availableLanguages = availableLanguages;

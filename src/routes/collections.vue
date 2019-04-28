@@ -7,6 +7,7 @@
           path: '/collections'
         }
       ]"
+      icon="box"
     />
     <v-error
       v-if="items.length === 0"
@@ -14,14 +15,15 @@
       :body="$t('no_collections_body')"
       icon="error_outline"
     />
-    <v-table
-      v-else
-      :items="items"
-      :columns="fields"
-      primary-key-field="collection"
-      link="__link__"
-      @select="select"
-    />
+    <div class="padding" v-else>
+      <v-table
+        :items="items"
+        :columns="fields"
+        primary-key-field="collection"
+        link="__link__"
+        @select="select"
+      />
+    </div>
   </div>
 </template>
 
@@ -95,5 +97,9 @@ export default {
 <style lang="scss" scoped>
 .collections {
   padding-bottom: var(--page-padding-bottom);
+}
+
+.padding {
+  padding: 0 32px;
 }
 </style>

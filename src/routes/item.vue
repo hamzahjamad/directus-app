@@ -13,7 +13,7 @@
   </div>
 
   <div v-else-if="fields === null">
-    <v-header />
+    <v-header :icon-link="`/collections`" />
     <v-loader area="content" />
   </div>
 
@@ -21,13 +21,23 @@
     <v-header
       :breadcrumb="breadcrumb"
       :info-toggle="!newItem && !batch && !activityDetail"
+      :icon-link="singleItem ? null : `/collections/${collection}`"
+      :icon="singleItem ? collectionInfo.icon : 'arrow_back'"
       item-detail
     >
+      <template v-if="status" slot="title">
+        <span
+          class="status-indicator"
+          v-tooltip="statusName"
+          :style="{ backgroundColor: `var(--${statusColor})` }"
+        />
+      </template>
       <template slot="buttons">
         <v-header-button
           v-if="!newItem && !singleItem && permission.delete !== 'none'"
           icon="delete_outline"
-          color="danger"
+          color="gray"
+          hover-color="danger"
           :label="$t('delete')"
           @click="confirmRemove = true"
         />
@@ -39,23 +49,29 @@
           :label="$t('save')"
           icon="check"
           color="action"
+          hover-color="success"
           @click="confirmBatchSave = true"
         />
 
         <v-header-button
-          v-else-if="
-            isNew ? permission.create !== 'none' : permission.update !== 'none'
-          "
+          v-else-if="isNew ? permission.create !== 'none' : permission.update !== 'none'"
           :disabled="!editing"
           :loading="saving"
           :label="$t('save')"
-          :options="{
-            stay: $t('save_and_stay'),
-            add: $t('save_and_add'),
-            copy: $t('save_as_copy')
-          }"
+          :options="
+            !editing
+              ? {
+                  copy: $t('save_as_copy')
+                }
+              : {
+                  stay: $t('save_and_stay'),
+                  add: $t('save_and_add'),
+                  copy: $t('save_as_copy')
+                }
+          "
           icon="check"
           color="action"
+          hover-color="success"
           @click="singleItem ? save('stay') : save('leave')"
           @input="save"
         />
@@ -63,36 +79,21 @@
     </v-header>
 
     <v-info-sidebar v-if="!newItem && !batch" wide item-detail>
-      <div class="tabs">
-        <button
-          :class="{ active: activeTab === 'both' }"
-          @click="activeTab = 'both'"
-        >
-          {{ $t("both") }}
-        </button>
-        <button
-          v-if="permission.comment !== 'none'"
-          :class="{ active: activeTab === 'comments' }"
-          @click="activeTab = 'comments'"
-        >
-          {{ $t("comments") }}
-        </button>
-        <button
-          :class="{ active: activeTab === 'activity' }"
-          @click="activeTab = 'activity'"
-        >
-          {{ $t("activity") }}
-        </button>
-      </div>
       <v-activity
         :activity="activity"
         :revisions="revisions"
         :loading="activityLoading"
-        :show="activeTab"
         :comment-permission="permission.comment"
         @input="postComment"
         @revert="revertActivity = $event"
       />
+
+      <router-link to="/activity" class="notifications" v-if="canReadActivity">
+        <div class="preview">
+          <v-icon name="notifications" color="light-gray" />
+          <span>{{ $t("notifications") }}</span>
+        </div>
+      </router-link>
     </v-info-sidebar>
 
     <v-form
@@ -158,14 +159,10 @@
         @close="revertActivity = false"
       >
         <div class="revert">
-          <p class="notice">
+          <v-notice color="warning">
             {{ $t("revert_copy", { date: $d(revertActivity.date, "long") }) }}
-          </p>
-          <v-form
-            readonly
-            :values="revertActivity.revision.data"
-            :fields="fields"
-          />
+          </v-notice>
+          <v-form readonly :values="revertActivity.revision.data" :fields="fields" full-width />
         </div>
       </v-modal>
     </portal>
@@ -272,7 +269,6 @@ export default {
       confirmNavigation: false,
       leavingTo: "",
 
-      activeTab: "both",
       activityLoading: false,
       activity: [],
       revisions: {},
@@ -310,9 +306,7 @@ export default {
             path: "/files"
           },
           {
-            name: this.newItem
-              ? this.$t("creating_item")
-              : this.$t("editing_item"),
+            name: this.newItem ? this.$t("creating_item") : this.$t("editing_item"),
             path: this.$route.path
           }
         ];
@@ -361,9 +355,7 @@ export default {
         });
       } else {
         breadcrumb.push({
-          name: this.newItem
-            ? this.$t("creating_item")
-            : this.$t("editing_item"),
+          name: this.newItem ? this.$t("creating_item") : this.$t("editing_item"),
           path: this.$route.path
         });
       }
@@ -415,13 +407,12 @@ export default {
     // This will make the delete button update the item to the hidden status
     // instead of deleting it completely from the database
     softDeleteStatus() {
-      if (!this.collectionInfo.status_mapping) return null;
+      if (!this.collectionInfo.status_mapping || !this.statusField) return null;
 
       const statusKeys = Object.keys(this.collectionInfo.status_mapping);
-      const index = this.$lodash.findIndex(
-        Object.values(this.collectionInfo.status_mapping),
-        { soft_delete: true }
-      );
+      const index = this.$lodash.findIndex(Object.values(this.collectionInfo.status_mapping), {
+        soft_delete: true
+      });
       return statusKeys[index];
     },
 
@@ -436,7 +427,6 @@ export default {
     },
     statusField() {
       if (!this.fields) return null;
-
       return (
         this.$lodash.find(
           Object.values(this.fields),
@@ -454,10 +444,7 @@ export default {
       if (this.batch) {
         if (this.statusField) {
           const statuses = this.savedValues.map(item => item[this.statusField]);
-          return this.$lodash.merge(
-            {},
-            ...statuses.map(status => permission.statuses[status])
-          );
+          return this.$lodash.merge({}, ...statuses.map(status => permission.statuses[status]));
         }
 
         return permission;
@@ -487,6 +474,12 @@ export default {
 
       return permission;
     },
+    permissions() {
+      return this.$store.state.permissions;
+    },
+    canReadActivity() {
+      return this.permissions.directus_activity.read !== "none";
+    },
     readonly() {
       return this.permission.update === "none";
     },
@@ -500,6 +493,33 @@ export default {
         ...field,
         name: formatTitle(field.field)
       }));
+    },
+
+    // Gets the configured color for the current status (this.status) of the item. This will be
+    // fetched out of this.fields
+    statusColor() {
+      if (this.statusField && this.status) {
+        const statusMapping = this.fields[this.statusField].options.status_mapping;
+
+        if (!statusMapping) return null;
+
+        return statusMapping[this.status].background_color || null;
+      }
+
+      return null;
+    },
+
+    // The configured name of the current status.
+    statusName() {
+      if (this.statusField && this.status) {
+        const statusMapping = this.fields[this.statusField].options.status_mapping;
+
+        if (!statusMapping) return null;
+
+        return statusMapping[this.status].name || null;
+      }
+
+      return null;
     }
   },
   created() {
@@ -512,14 +532,15 @@ export default {
   },
   mounted() {
     const handler = () => {
-      this.save("stay");
+      if (this.editing) {
+        this.save("stay");
+      }
+
       return false;
     };
 
     this.$helpers.mousetrap.bind("mod+s", handler);
-    this.formtrap = this.$helpers
-      .mousetrap(this.$refs.form.$el)
-      .bind("mod+s", handler);
+    this.formtrap = this.$helpers.mousetrap(this.$refs.form.$el).bind("mod+s", handler);
   },
   beforeDestroy() {
     this.$helpers.mousetrap.unbind("mod+s");
@@ -537,9 +558,7 @@ export default {
   },
   methods: {
     stageDefaultValues() {
-      this.$lodash.forEach(this.defaultValues, (value, field) =>
-        this.stageValue({ field, value })
-      );
+      this.$lodash.forEach(this.defaultValues, (value, field) => this.stageValue({ field, value }));
     },
     stageValue({ field, value }) {
       this.$store.dispatch("stageValue", { field, value });
@@ -585,8 +604,6 @@ export default {
         });
     },
     save(method) {
-      if (this.$store.getters.editing === false) return;
-
       this.saving = true;
 
       if (method === "copy") {
@@ -629,9 +646,7 @@ export default {
               iconMain: "check"
             });
             if (this.collection.startsWith("directus_")) {
-              return this.$router.push(
-                `/${this.collection.substring(9)}/${pk}`
-              );
+              return this.$router.push(`/${this.collection.substring(9)}/${pk}`);
             }
 
             return this.$router.push(`/collections/${this.collection}/${pk}`);
@@ -644,6 +659,8 @@ export default {
             });
           });
       }
+
+      if (this.$store.getters.editing === false) return;
 
       const id = this.$helpers.shortid.generate();
       this.$store.dispatch("loadingStart", { id });
@@ -679,9 +696,7 @@ export default {
 
             if (this.newItem) {
               const primaryKey = savedValues[this.primaryKeyField];
-              return this.$router.push(
-                `/collections/${this.collection}/${primaryKey}`
-              );
+              return this.$router.push(`/collections/${this.collection}/${primaryKey}`);
             }
             this.$store.dispatch("startEditing", {
               collection: this.collection,
@@ -715,7 +730,6 @@ export default {
     fetchActivity() {
       this.activity = [];
       this.revisions = {};
-      this.activeTab = "both";
       this.activityLoading = true;
 
       const id = shortid.generate();
@@ -725,8 +739,7 @@ export default {
         this.$api.getActivity({
           "filter[collection][eq]": this.collection,
           "filter[item][eq]": this.primaryKey,
-          fields:
-            "id,action,action_on,comment,action_by.first_name,action_by.last_name",
+          fields: "id,action,action_on,comment,action_by.first_name,action_by.last_name",
           sort: "-action_on"
         }),
         this.activityDetail
@@ -778,9 +791,7 @@ export default {
     },
     checkOtherUsers() {
       const path = this.$router.currentRoute.path;
-      const date = this.$helpers.date.dateToSql(
-        new Date(new Date() - 5 * 60000)
-      );
+      const date = this.$helpers.date.dateToSql(new Date(new Date() - 5 * 60000));
 
       this.$api
         .getUsers({
@@ -933,7 +944,6 @@ export default {
     this.confirmNavigation = false;
     this.leavingTo = "";
 
-    this.activeTab = "both";
     this.activityLoading = false;
     this.activity = [];
     this.revisions = {};
@@ -1012,74 +1022,52 @@ export default {
   padding-bottom: var(--page-padding-bottom);
 }
 
-.tabs {
-  display: flex;
-  padding: 0;
-  list-style: none;
-  justify-content: center;
-  border-bottom: 1px solid var(--lightest-gray);
-  position: sticky;
-  top: -20px;
-  background-color: var(--white);
-  z-index: +1;
-  margin: -20px;
-  margin-bottom: 20px;
-
-  button {
-    flex-grow: 1;
-    flex-shrink: 1;
-    max-width: 120px;
-    flex-basis: 120px;
-    height: 50px;
-    position: relative;
-    color: var(--gray);
-
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 700;
-    position: relative;
-
-    &:hover {
-      color: var(--darker-gray);
-    }
-
-    &::after {
-      content: "";
-      display: block;
-      width: 100%;
-      position: absolute;
-      height: 3px;
-      bottom: -2px;
-      background-color: var(--accent);
-      transform: scaleY(0);
-      transition: transform var(--fast) var(--transition-out);
-    }
-
-    &.active {
-      color: var(--accent);
-
-      &::after {
-        transform: scaleY(1);
-        transition: transform var(--fast) var(--transition-in);
-      }
-    }
-
-    &[disabled] {
-      color: var(--lighter-gray);
-      cursor: not-allowed;
-    }
-  }
-}
-
 .revert {
   padding: 20px;
 
-  p.notice {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px dotted var(--lighter-gray);
-    color: var(--warning);
+  .notice {
+    margin-bottom: 40px;
+  }
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  margin-left: 8px;
+  margin-top: 1px;
+}
+
+.notifications {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  text-decoration: none;
+  padding: 20px;
+  background-color: #dde3e6;
+  color: var(--darker-gray);
+  display: block;
+
+  .preview {
+    display: flex;
+    align-items: center;
+
+    span {
+      flex-grow: 1;
+      margin-left: 10px;
+    }
+  }
+
+  select {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
   }
 }
 </style>

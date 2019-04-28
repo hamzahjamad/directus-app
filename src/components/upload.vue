@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="v-upload"
-    :class="{ uploading: Object.keys(files).length > 0, disabled }"
-  >
+  <div class="v-upload" :class="{ uploading: Object.keys(files).length > 0, disabled }">
     <input
       :disabled="disabled"
       class="select"
@@ -14,7 +11,9 @@
     />
 
     <div class="dropzone" :class="{ smaller: small }">
-      <div class="icon"><i class="material-icons">cloud_upload</i></div>
+      <div class="icon">
+        <v-icon name="cloud_upload" />
+      </div>
       <div class="info">
         <p class="name">{{ $tc("drop_files", multiple ? 2 : 1) }}</p>
         <p class="file-info no-wrap">
@@ -27,25 +26,19 @@
       </div>
       <div class="buttons">
         <form class="embed-input" @submit.prevent="saveEmbed" v-if="embed">
-          <input
-            type="url"
-            :placeholder="$t('embed_placeholder')"
-            v-model="embedLink"
-          />
+          <input type="url" :placeholder="$t('embed_placeholder')" v-model="embedLink" />
           <button type="submit">Save</button>
         </form>
-        <i
-          v-tooltip="$t('embed')"
-          @click="embed = !embed"
-          class="material-icons select"
-          >link</i
-        >
-        <i
-          v-tooltip="$t('select_from_device')"
-          @click="$refs.select.click()"
-          class="material-icons select"
-          >devices</i
-        >
+        <button @click="embed = !embed">
+          <v-icon name="link" v-tooltip="$t('embed')" class="select" />
+        </button>
+        <button @click="$refs.select.click()">
+          <v-icon
+            v-tooltip="$t('select_from_device')"
+            class="material-icons select"
+            name="devices"
+          />
+        </button>
       </div>
     </div>
     <transition-group tag="ol" name="list">
@@ -60,22 +53,16 @@
               ? 'cloud_done'
               : 'cloud_upload'
           "
-          :color="
-            file.error !== null
-              ? 'danger'
-              : file.progress === 100
-              ? 'success'
-              : 'accent'
-          "
+          :color="file.error !== null ? 'danger' : file.progress === 100 ? 'success' : 'accent'"
           :stroke="file.progress === 100 ? 0 : 2"
         />
         <div class="info">
           <p class="name no-wrap">{{ file.name }}</p>
           <p class="file-info no-wrap">
             {{ file.size }}
-            <span v-if="file.progress && file.progress !== 100" class="progress"
-              >{{ file.progress }}%</span
-            >
+            <span v-if="file.progress && file.progress !== 100" class="progress">
+              {{ file.progress }}%
+            </span>
           </p>
         </div>
       </li>
@@ -126,21 +113,49 @@ export default {
   computed: {
     acceptTypesList() {
       if (this.accept) {
-        return this.accept.trim().split(/\s*,\s*/)
+        return this.accept.trim().split(/\s*,\s*/);
       } else {
-        return []
+        return [];
       }
     }
   },
   methods: {
     saveEmbed() {
+      const id = this.$helpers.shortid.generate();
+      const name = this.embedLink.substring(this.embedLink.lastIndexOf("/") + 1);
+      this.files = {
+        [id]: {
+          name,
+          size: null,
+          progress: 0,
+          type: null,
+          error: null
+        },
+        ...this.files
+      };
       this.$api
         .createItem("directus_files", {
           data: this.embedLink
         })
-        .then(res => {
+        .then(res => res.data)
+        .then(data => {
+          const { filesize: size, type, title: name } = data;
+          this.files = {
+            [id]: {
+              name,
+              size,
+              progress: 100,
+              type,
+              error: null
+            },
+            ...this.files
+          };
+          return data;
+        })
+        .then(data => {
           this.$emit("upload", {
-            data: res
+            ...this.files[id],
+            data
           });
         })
         .then(() => (this.embed = false))
@@ -210,8 +225,14 @@ export default {
         })
         .catch(error => {
           this.files[id].error = error;
+          let message;
+          if (error.message) {
+            message = error.message;
+          } else {
+            message = this.$t("something_went_wrong_body");
+          }
           this.$events.emit("error", {
-            notify: this.$t("something_went_wrong_body"),
+            notify: message,
             error
           });
         });
@@ -235,6 +256,7 @@ export default {
 
 .dropzone {
   position: relative;
+  padding: 0;
 
   .buttons {
     position: absolute;
@@ -285,7 +307,7 @@ export default {
         color: var(--white);
 
         &:hover {
-          background-color: var(--accent);
+          background-color: var(--darkest-gray);
           color: var(--white);
         }
       }
@@ -321,9 +343,8 @@ input.select {
   border-radius: var(--border-radius);
 
   .icon i {
-    font-size: 100px;
+    font-size: 100px !important;
     color: var(--lighter-gray);
-    margin-bottom: -6px;
   }
 
   p {
@@ -361,7 +382,7 @@ input.select {
 
   &.smaller {
     .icon i {
-      font-size: 60px;
+      font-size: 60px !important;
     }
 
     p {

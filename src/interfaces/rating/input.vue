@@ -1,0 +1,62 @@
+<template>
+  <div class="rating">
+    <stars
+      v-if="options.display === 'star'"
+      :options="options"
+      :rating.sync="!!value ? value : rating"
+      :readonly="readonly"
+      @update:rating="updateValue"
+    ></stars>
+    <div class="rating-value" v-else-if="options.display === 'number'">
+      <v-input
+        class="rating-input"
+        type="number"
+        min="0"
+        :max="options.max_stars"
+        icon-left="star"
+        :disabled="readonly"
+        :value="String(value) || '0'"
+        @input="updateValue"
+      ></v-input>
+      <span>
+        {{ (!!value ? String(value) : "0") + "/" + options.max_stars }}
+      </span>
+    </div>
+  </div>
+</template>
+
+<script>
+import mixin from "@directus/extension-toolkit/mixins/interface";
+import Stars from "./stars.vue";
+
+export default {
+  name: "interface-rating",
+  mixins: [mixin],
+  data() {
+    return {
+      rating: null
+    };
+  },
+  components: {
+    Stars
+  },
+  methods: {
+    updateValue(value) {
+      if (value > this.options.max_stars) {
+        event.target.value = String(this.options.max_stars);
+        return this.$emit("input", this.options.max_stars);
+      }
+
+      this.$emit("input", +value);
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.rating-input {
+  display: inline-block;
+  margin-right: 5px;
+  width: 100%;
+}
+</style>

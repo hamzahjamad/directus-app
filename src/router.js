@@ -27,8 +27,7 @@ import ModalDebug from "./routes/modal-debug.vue";
 
 Vue.use(Router);
 
-const routerMode =
-  window.__DirectusConfig__ && window.__DirectusConfig__.routerMode;
+const routerMode = window.__DirectusConfig__ && window.__DirectusConfig__.routerMode;
 
 const base =
   process.env.NODE_ENV === "production" // eslint-disable-line
@@ -59,7 +58,10 @@ const router = new Router({
     {
       path: "/collections/:collection/:primaryKey",
       props: true,
-      component: Item
+      component: Item,
+      meta: {
+        infoSidebarWidth: "wide"
+      }
     },
     {
       path: "/ext/:id",
@@ -71,17 +73,9 @@ const router = new Router({
       beforeEnter(to, from, next) {
         const { collection, bookmarkID } = to.params;
 
-        const bookmark = store.state.bookmarks.filter(
-          bookmark => bookmark.id == bookmarkID
-        )[0];
+        const bookmark = store.state.bookmarks.filter(bookmark => bookmark.id == bookmarkID)[0];
 
-        const {
-          search_query,
-          filters,
-          view_query,
-          view_options,
-          view_type
-        } = bookmark;
+        const { search_query, filters, view_query, view_options, view_type } = bookmark;
 
         api
           .getItems("directus_collection_presets", {
@@ -94,11 +88,13 @@ const router = new Router({
           .then(data => (data && data.length >= 1 ? data[0] : null))
           .then(userPreferences => {
             if (userPreferences) {
-              return api.updateItem(
-                "directus_collection_presets",
-                userPreferences.id,
-                { search_query, filters, view_query, view_options, view_type }
-              );
+              return api.updateItem("directus_collection_presets", userPreferences.id, {
+                search_query,
+                filters,
+                view_query,
+                view_options,
+                view_type
+              });
             }
           })
           .then(() => {
@@ -132,7 +128,10 @@ const router = new Router({
     {
       path: "/collections/directus_files/:primaryKey",
       component: Item,
-      alias: "/files/:primaryKey"
+      alias: "/files/:primaryKey",
+      meta: {
+        infoSidebarWidth: "wide"
+      }
     },
     {
       path: "/collections/directus_users",
@@ -142,7 +141,10 @@ const router = new Router({
     {
       path: "/collections/directus_users/:primaryKey",
       component: Item,
-      alias: "/users/:primaryKey"
+      alias: "/users/:primaryKey",
+      meta: {
+        infoSidebarWidth: "wide"
+      }
     },
     {
       path: "/collections/directus_activity",

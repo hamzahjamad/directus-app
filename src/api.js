@@ -5,7 +5,11 @@ import store from "./store";
 import { LOGIN_SUCCESS } from "./store/mutation-types";
 
 const client = new SDK({
-  storage: window.sessionStorage
+  storage: window.sessionStorage,
+
+  // Can be updated to reflect what the expiry time is in the api
+  // TODO: remove this when the SDK default is set to 20
+  tokenExpiryTime: 20
 });
 
 client.onAutoRefreshError = function logout(error) {

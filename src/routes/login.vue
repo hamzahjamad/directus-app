@@ -29,14 +29,15 @@
             <option v-if="allowOther" value="other">{{ $t("other") }}</option>
           </select>
           {{ $t("to") }}
-          <span
-            >{{ urls[selectedUrl] || $t("choose_project") }}
-            <i
+          <span>
+            {{ urls[selectedUrl] || $t("choose_project") }}
+            <v-icon
               v-if="Object.keys(urls).length > 1 || allowOther"
-              class="material-icons"
-              >arrow_drop_down</i
-            ></span
-          >
+              size="18"
+              class="icon"
+              name="arrow_drop_down"
+            />
+          </span>
         </label>
 
         <div class="material-input" v-if="selectOther">
@@ -85,19 +86,11 @@
             <label for="password">{{ $t("password") }}</label>
           </div>
           <div class="buttons">
-            <button
-              type="button"
-              class="forgot"
-              @click.prevent="resetMode = !resetMode"
-            >
+            <button type="button" class="forgot" @click.prevent="resetMode = !resetMode">
               {{ resetMode ? $t("sign_in") : $t("forgot_password") }}
             </button>
 
-            <button
-              class="style-btn"
-              type="submit"
-              :disabled="disabled || loading"
-            >
+            <button class="style-btn" type="submit" :disabled="disabled || loading">
               {{ resetMode ? $t("reset_password") : $t("sign_in") }}
             </button>
           </div>
@@ -120,23 +113,19 @@
               :class="errorType"
               @click="error = null"
             >
-              <i class="material-icons">{{ errorType }}</i> {{ errorMessage }}
+              <v-icon :name="errorType" />
+              {{ errorMessage }}
             </span>
 
-            <i
-              v-else-if="
-                thirdPartyAuthProviders && !thirdPartyAuthProviders.length
-              "
+            <v-icon
+              v-else-if="thirdPartyAuthProviders && !thirdPartyAuthProviders.length"
+              :name="loggedIn ? 'lock_open' : 'lock_outline'"
               key="lock"
-              class="material-icons lock"
-              >{{ loggedIn ? "lock_open" : "lock_outline" }}</i
-            >
+              class="lock"
+            />
 
             <ul v-else class="third-party-auth" key="third-party-auth">
-              <li
-                v-for="provider in thirdPartyAuthProviders"
-                :key="provider.name"
-              >
+              <li v-for="provider in thirdPartyAuthProviders" :key="provider.name">
                 <a
                   v-tooltip.bottom="$helpers.formatTitle(provider.name)"
                   :href="url + 'auth/sso/' + provider.name"
@@ -149,11 +138,9 @@
         </template>
       </form>
 
-      <small
-        v-tooltip="{ classes: ['inverted'], content: version }"
-        class="style-4"
-        >{{ $t("powered_by_directus") }}</small
-      >
+      <small v-tooltip="{ classes: ['inverted'], content: version }" class="style-4">
+        {{ $t("powered_by_directus") }}
+      </small>
     </div>
   </transition>
 </template>
@@ -171,8 +158,7 @@ export default {
   },
   data() {
     return {
-      selectedUrl:
-        this.$store.state.auth.url + "/" + this.$store.state.auth.env + "/",
+      selectedUrl: this.$store.state.auth.url + "/" + this.$store.state.auth.env + "/",
 
       url: null,
       email: null,
@@ -212,10 +198,6 @@ export default {
     storeError() {
       return this.$store.state.auth.error;
     },
-    storeUrl() {
-      if (!this.$store.state.auth.url) return null;
-      return this.$store.state.auth.url + "/" + this.$store.state.auth.env;
-    },
     errorType() {
       if (!this.error && !this.SSOerror) return;
 
@@ -235,10 +217,7 @@ export default {
 
       const errorCode = (this.error && this.error.code) || this.SSOerror;
 
-      if (
-        this.localeMessages.errors &&
-        this.localeMessages.errors[errorCode] != null
-      ) {
+      if (this.localeMessages.errors && this.localeMessages.errors[errorCode] != null) {
         return this.$t(`errors[${errorCode}]`);
       }
 
@@ -261,30 +240,37 @@ export default {
       return this.selectedUrl === "other";
     }
   },
+
   created() {
     this.checkUrl = this.$lodash.debounce(this.checkUrl, 300);
 
     if (this.url) {
       this.checkUrl();
     }
-
-    let lastUsedURL =
-      this.storeUrl || Object.keys(window.__DirectusConfig__.api)[0];
+    let lastUsedURL = this.$store.state.auth.url
+      ? this.$store.state.auth.url
+      : Object.keys(window.__DirectusConfig__.api)[0];
 
     // Check if the last used URL is still a valid option before using it
-    if (
-      Object.keys(window.__DirectusConfig__.api).includes(lastUsedURL) === false
-    ) {
+    if (Object.keys(window.__DirectusConfig__.api).includes(lastUsedURL) === false) {
       lastUsedURL = null;
     }
 
-    this.url =
-      lastUsedURL || Object.keys(window.__DirectusConfig__.api)[0] || "";
+    this.url = lastUsedURL || Object.keys(window.__DirectusConfig__.api)[0] || "";
     this.selectedUrl = this.url;
 
     if (this.url.endsWith("/") === false) this.url = this.url + "/";
 
     this.trySSOLogin();
+  },
+  beforeRouteEnter(to, from, next) {
+    if (to.query.project) {
+      return next(vm => {
+        vm.selectedUrl = "other";
+        vm.url = atob(to.query.project);
+      });
+    }
+    return next();
   },
   watch: {
     url() {
@@ -445,10 +431,7 @@ export default {
         return null;
       }
 
-      if (
-        queryParams.get("request_token") &&
-        queryParams.get("request_token").length > 0
-      ) {
+      if (queryParams.get("request_token") && queryParams.get("request_token").length > 0) {
         this.clearRequestToken();
         this.loading = true;
         this.$store
@@ -553,7 +536,7 @@ select {
   z-index: +1;
   left: 0;
   top: 0;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -571,8 +554,7 @@ select {
     color: var(--darker-gray);
   }
 
-  i {
-    font-size: 18px;
+  .icon {
     width: 10px;
     height: 10px;
     vertical-align: top;
@@ -629,7 +611,7 @@ select {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 400;
     transform-origin: left;
     transition: all var(--fast) var(--transition);
@@ -637,6 +619,14 @@ select {
 
   input:focus,
   input.has-value {
+    & + label {
+      transform: scale(0.8);
+      top: -10px;
+    }
+  }
+
+  input:-webkit-autofill {
+    /* Fixes FireFox: If any part of a selector is invalid, it invalidates the whole selector */
     & + label {
       transform: scale(0.8);
       top: -10px;
@@ -661,11 +651,12 @@ select {
 }
 
 button.style-btn {
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
   background-color: var(--darker-gray);
   width: 100%;
   display: block;
-  padding: 10px 0;
+  padding: 12px 0;
   border-radius: var(--border-radius);
   transition: background-color var(--fast) var(--transition);
   position: relative;
@@ -799,11 +790,6 @@ small {
   pointer-events: none;
   user-select: none;
 
-  h1::after {
-    content: "";
-    animation: ellipsis steps(3) 1s infinite;
-  }
-
   .material-input {
     input {
       transition: var(--fast) var(--transition);
@@ -820,24 +806,6 @@ small {
 
   .project-switcher i {
     display: none;
-  }
-}
-
-@keyframes ellipsis {
-  0% {
-    content: ".";
-  }
-
-  33% {
-    content: "..";
-  }
-
-  66% {
-    content: "...";
-  }
-
-  100% {
-    content: ".";
   }
 }
 

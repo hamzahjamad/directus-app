@@ -7,7 +7,7 @@ import mousetrap from "mousetrap";
 import shortid from "shortid";
 import { enableBodyScroll, disableBodyScroll } from "body-scroll-lock";
 import snarkdown from "snarkdown";
-import dateFns from "date-fns";
+import * as dateFns from "date-fns";
 import date from "./date";
 import componentExists from "./component-exists";
 import formatFilters from "./format-filters";

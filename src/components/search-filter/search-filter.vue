@@ -2,15 +2,17 @@
   <div :class="{ open }" ref="searchFilter" class="search-filter">
     <v-header-button
       class="toggle"
+      icon-color="lighter-gray"
       :alert="hasFilters"
       icon="filter_list"
       no-background
       @click="open = !open"
-      >Filter</v-header-button
     >
+      Filter
+    </v-header-button>
 
     <div class="wrapper">
-      <i class="material-icons">search</i>
+      <v-icon name="search" />
       <input
         ref="searchInput"
         :placeholder="placeholder || $t('search')"
@@ -27,15 +29,11 @@
           class="clear-filters"
           @click="clearFilters"
         >
-          <i class="material-icons">close</i>
+          <v-icon name="close" />
         </button>
       </transition>
-      <button
-        :class="{ 'has-filters': hasFilters }"
-        class="toggle"
-        @click="open = !open"
-      >
-        <i class="material-icons">filter_list</i>
+      <button :class="{ 'has-filters': hasFilters }" class="toggle" @click="open = !open">
+        <v-icon name="filter_list" />
       </button>
     </div>
 
@@ -59,16 +57,11 @@
             <p>{{ fields[filter.field] }}</p>
             <span>
               {{ $t(operators[filter.operator]) }}
-              <i class="material-icons">arrow_drop_down</i>
-              <select
-                @change="updateFilter(i, 'operator', $event.target.value)"
-              >
-                <option
-                  v-for="(name, operator) in operators"
-                  :key="operator"
-                  :value="operator"
-                  >{{ $t(name) }}</option
-                >
+              <v-icon name="arrow_drop_down" />
+              <select @change="updateFilter(i, 'operator', $event.target.value)">
+                <option v-for="(name, operator) in operators" :key="operator" :value="operator">
+                  {{ $t(name) }}
+                </option>
               </select>
             </span>
             <button class="remove" @click="deleteFilter(i)">
@@ -85,9 +78,9 @@
         </div>
 
         <div class="field">
-          <invisible-label html-for="add">{{
-            $t("add_field_filter")
-          }}</invisible-label>
+          <invisible-label html-for="add">
+            {{ $t("add_field_filter") }}
+          </invisible-label>
           <v-select
             id="add"
             icon="add_circle"
@@ -100,12 +93,7 @@
       </div>
     </transition>
 
-    <v-blocker
-      v-if="open"
-      :z-index="18"
-      class="blocker"
-      @click="open = !open"
-    />
+    <v-blocker v-if="open" :z-index="18" class="blocker" @click="open = !open" />
   </div>
 </template>
 
@@ -162,10 +150,7 @@ export default {
       };
     },
     hasFilters() {
-      if ((this.filters && this.filters.length > 0) || this.searchQuery)
-        return true;
-
-      return false;
+      return !!((this.filters && this.filters.length > 0) || this.searchQuery);
     },
     fields() {
       const fields = {};
@@ -237,6 +222,8 @@ export default {
   color: var(--darkest-gray);
   transform-origin: top;
   box-shadow: var(--box-shadow);
+  border-bottom: 2px solid var(--lighter-gray);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 
   @media (min-width: 800px) {
     left: var(--nav-sidebar-width);
@@ -244,6 +231,8 @@ export default {
   }
 
   @media (min-width: 1000px) {
+    border-left: 2px solid var(--lighter-gray);
+    border-right: 2px solid var(--lighter-gray);
     left: 0;
     width: 100%;
   }
@@ -271,7 +260,7 @@ export default {
 
     span {
       position: relative;
-      color: var(--accent);
+      color: var(--darkest-gray);
       margin-left: 5px;
       padding-right: 2em;
       flex-grow: 1;
@@ -350,23 +339,20 @@ export default {
   }
 
   .search-filter {
-    margin-right: 10px;
+    // margin-right: 10px;
     position: relative;
 
     .search {
       width: 100%;
       height: var(--input-height);
-      border-radius: var(--border-radius);
+      border-radius: 22px;
       display: block;
-      border: 0;
+      border: 2px solid var(--lighter-gray);
       color: var(--gray);
-      padding: 10px;
+      padding: 10px 40px 10px 40px;
       line-height: 1.5;
       transition: var(--fast) var(--transition);
-      transition-property: color, border-color, padding;
-      height: var(--input-height);
-      padding-left: 40px;
-      padding-right: 40px;
+      transition-property: color, border-color, padding, border-radius;
 
       &::placeholder {
         color: var(--light-gray);
@@ -374,12 +360,12 @@ export default {
 
       &:focus {
         color: var(--darker-gray);
-        border-color: var(--accent);
+        border-color: var(--gray);
         outline: 0;
       }
 
       &:focus + i {
-        color: var(--accent);
+        color: var(--darker-gray);
       }
 
       &:-webkit-autofill {
@@ -425,7 +411,7 @@ export default {
 
         &:hover,
         .user-is-tabbing &:focus {
-          color: var(--accent);
+          color: var(--darker-gray);
         }
 
         &::after {
@@ -436,9 +422,9 @@ export default {
           background-color: var(--warning);
           border-radius: 50%;
           position: absolute;
-          top: 5%;
-          right: 5%;
-          border: 1px solid var(--white);
+          top: -3%;
+          right: -3%;
+          border: 2px solid var(--white);
           transform: scale(0);
           transition: transform var(--fast) var(--transition-out);
         }
@@ -468,7 +454,7 @@ export default {
     &.open {
       .toggle {
         i {
-          color: var(--accent);
+          color: var(--darker-gray);
         }
       }
 
@@ -482,13 +468,13 @@ export default {
 
 @media (min-width: 1000px) {
   .search-filter {
-    width: 240px;
+    width: 200px;
 
     transition: width var(--slow) var(--transition);
 
     &.open,
     &:focus-within {
-      width: 340px;
+      width: 300px;
     }
   }
 }

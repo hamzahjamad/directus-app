@@ -1,7 +1,7 @@
 <template>
   <transition name="error">
     <div class="v-error">
-      <i :class="color" class="material-icons">{{ icon }}</i>
+      <v-icon class="icon" :name="icon" size="48" :color="color" />
       <h2 class="style-1">{{ title }}</h2>
       <p>{{ body }}</p>
     </div>
@@ -14,11 +14,9 @@ export default {
   props: {
     color: {
       type: String,
-      default: "accent",
+      default: "darker-gray",
       validator(val) {
-        return ["accent", "secondary", "success", "warning", "danger"].includes(
-          val
-        );
+        return ["darker-gray", "accent", "success", "warning", "danger"].includes(val);
       }
     },
     icon: {
@@ -45,11 +43,8 @@ export default {
   flex-direction: column;
   margin: 100px 0;
 
-  i {
-    font-size: 48px;
-    background-color: var(--white);
-    box-shadow: var(--box-shadow);
-    color: var(--accent);
+  .icon {
+    border: 2px solid var(--lightest-gray);
     border-radius: 50%;
     padding: 20px;
     margin-bottom: 10px;
@@ -64,26 +59,6 @@ export default {
     color: var(--light-gray);
     max-width: 200px;
     text-align: center;
-  }
-
-  .accent {
-    color: var(--accent);
-  }
-
-  .secondary {
-    color: var(--secondary);
-  }
-
-  .success {
-    color: var(--success);
-  }
-
-  .warning {
-    color: var(--warning);
-  }
-
-  .danger {
-    color: var(--danger);
   }
 }
 

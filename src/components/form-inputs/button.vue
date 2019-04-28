@@ -6,7 +6,7 @@
     class="form-button style-btn"
     @click="$emit('click')"
   >
-    <i v-if="icon && !loading" class="material-icons">{{ icon }}</i>
+    <v-icon v-if="icon && !loading" :name="icon" class="icon" />
     <v-spinner
       v-if="loading"
       :line-size="2"
@@ -51,8 +51,7 @@ export default {
     bg: {
       type: String,
       default: "action",
-      validator: value =>
-        ["action", "secondary", "warning", "danger"].includes(value)
+      validator: value => ["action", "warning", "danger"].includes(value)
     }
   }
 };
@@ -66,16 +65,6 @@ button.action {
   &:hover:not(:disabled) {
     background-color: var(--darkest-gray);
     border-color: var(--darkest-gray);
-  }
-}
-
-button.secondary {
-  background-color: var(--secondary);
-  border-color: var(--secondary);
-
-  &:hover:not(:disabled) {
-    background-color: var(--secondary-dark);
-    border-color: var(--secondary-dark);
   }
 }
 
@@ -116,9 +105,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
-  height: 40px;
-  min-width: var(--width-small);
+  padding: 0 20px 1px;
+  height: 44px;
+  min-width: 136px;
   border: var(--input-border-width) solid var(--action);
 
   &:disabled:not(.loading) {
@@ -136,9 +125,9 @@ button {
     width: 100%;
   }
 
-  i {
-    vertical-align: -30%;
-    margin-right: 3px;
+  .icon {
+    vertical-align: -6px;
+    margin-right: 6px;
   }
 }
 

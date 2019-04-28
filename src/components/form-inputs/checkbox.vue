@@ -8,9 +8,7 @@
       @change="updateInput"
     />
     <label :for="id" class="no-wrap">
-      <i class="material-icons">{{
-        shouldBeChecked ? "check_box" : "check_box_outline_blank"
-      }}</i>
+      <v-icon :name="shouldBeChecked ? 'check_box' : 'check_box_outline_blank'" />
       {{ label }}
     </label>
   </span>
@@ -92,20 +90,17 @@ input {
 }
 
 label {
+  font-size: inherit;
   cursor: pointer;
-
-  i {
-    color: inherit;
-    margin-top: -2px;
-  }
+  color: var(--dark-gray);
 
   &:hover:not(:disabled),
   .user-is-tabbing &:focus {
-    color: var(--accent);
+    color: var(--darker-gray);
   }
 }
 
 input:checked + label {
-  color: var(--accent);
+  color: var(--darker-gray);
 }
 </style>
