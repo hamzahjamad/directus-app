@@ -49,7 +49,7 @@ export default {
   bookmark_global: "Global: Semua Pengguna",
   bookmark_personal: "Peribadi: Hanya Saya",
   bookmark_role: "Peranan: {role}",
-  bookmark_select_visibility: "Select bookmark visibility:",
+  bookmark_select_visibility: "Pilih keterlihatan penandabuku:",
   cancel: "Batal",
   change_project: "Tukar Projek",
   choose_one: "Pilih Satu",
