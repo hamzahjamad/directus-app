@@ -80,7 +80,12 @@ export default {
     }
 
     i {
-      margin-top: -3px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 1px;
+      margin: auto;
       color: var(--white);
 
       &.dark {

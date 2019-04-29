@@ -93,6 +93,7 @@
         </div>
       </template>
       <v-ext-layout-options
+        class="layout-options"
         :key="`${collection}-${viewType}`"
         :type="viewType"
         :collection="collection"
@@ -738,11 +739,15 @@ label.style-4 {
   }
 }
 
+.layout-options {
+  margin-bottom: 64px;
+}
+
 .notifications {
-  position: absolute;
+  position: fixed;
+  width: var(--info-sidebar-width);
   bottom: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
   margin: 0;
   text-decoration: none;
 }
